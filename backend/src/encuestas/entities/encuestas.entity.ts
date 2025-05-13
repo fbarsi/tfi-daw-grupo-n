@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Encuestas {
@@ -8,9 +9,22 @@ export class Encuestas {
   @Column({ type: 'varchar', length: '255', nullable: false })
   nombre: string;
 
-  @Column({ type: 'varchar', length: '255', nullable: false })
+  @Column({ 
+    type: 'uuid',
+    nullable: false,
+    unique: true,
+    default: () => 'gen_random_uuid()'
+  })
   codigo_respuesta: string;
 
-  @Column({ type: 'varchar', length: '255', nullable: false })
+  @Column({
+    type: 'uuid',
+    nullable: false,
+    unique: true,
+    default: () => 'gen_random_uuid()'
+  })
   codigo_resultados: string;
+
+  @OneToMany(() => Preguntas, (pregunta) => pregunta.encuesta)
+  preguntas: Preguntas[];
 }

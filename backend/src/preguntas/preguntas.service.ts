@@ -3,16 +3,19 @@ import { CreatePreguntasDto } from './dto/create-preguntas.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Preguntas } from './entities/preguntas.entity';
 import { Repository } from 'typeorm';
+import { OpcionesService } from 'src/opciones/opciones.service';
 
 @Injectable()
 export class PreguntasService {
   constructor(
     @InjectRepository(Preguntas)
-    private readonly preguntasRepository: Repository<Preguntas>
+    private readonly preguntasRepository: Repository<Preguntas>,
+    private readonly opcionesService: OpcionesService,
   ) {}
 
   async create(createPreguntasDto: CreatePreguntasDto): Promise<Preguntas> {
     const nuevaPregunta = this.preguntasRepository.create(createPreguntasDto);
+  
     return await this.preguntasRepository.save(nuevaPregunta);
   }
 
@@ -21,6 +24,6 @@ export class PreguntasService {
   }
 
   async findOne(id: number): Promise<Preguntas | null> {
-    return await this.preguntasRepository.findOne({ where: { id } });
+    return await this.preguntasRepository.findOne({ where: { id }, relations: ['opciones'] });
   }
 }

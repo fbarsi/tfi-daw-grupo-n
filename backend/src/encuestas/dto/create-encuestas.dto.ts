@@ -1,15 +1,14 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { CreatePreguntasDto } from 'src/preguntas/dto/create-preguntas.dto';
 
 export class CreateEncuestasDto {
   @IsString()
   @IsNotEmpty()
   nombre: string;
 
-  @IsString()
-  @IsNotEmpty()
-  codigo_respuesta: string;
-
-  @IsString()
-  @IsNotEmpty()
-  codigo_resultados: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePreguntasDto)
+  preguntas: CreatePreguntasDto[];
 }
