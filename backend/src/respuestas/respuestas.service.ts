@@ -11,10 +11,8 @@ export class RespuestasService {
     private readonly respuestasRepository: Repository<Respuestas>
   ) {}
 
-  async create(createRespuestasDto: CreateRespuestasDto): Promise<Respuestas> {
-    const nuevaRespuesta = this.respuestasRepository.create(createRespuestasDto);
-
-    return await this.respuestasRepository.save(nuevaRespuesta);
+  async create(codigo: string, createRespuestasDto: CreateRespuestasDto) {
+    
   }
 
   async findAll(): Promise<Respuestas[]> {

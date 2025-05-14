@@ -1,13 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Opciones } from 'src/opciones/entities/opciones.entity';
+import { Respuestas } from 'src/respuestas/entities/respuestas.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class RespuestasOpciones {
-    @PrimaryGeneratedColumn()
-    id:number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({type:'int', nullable: false})
-    id_respuesta: number
+  @ManyToOne(() => Opciones, (opcion) => opcion.respuestas_opciones)
+  @JoinColumn({ name: 'id_opcion' })
+  opcion: Opciones;
 
-    @Column({type:'int', nullable: false})
-    id_opcion: number
+  @ManyToOne(() => Respuestas, (respuesta) => respuesta.respuestas_opciones)
+  @JoinColumn({ name: 'id_respuesta' })
+  respuesta: Respuestas;
 }

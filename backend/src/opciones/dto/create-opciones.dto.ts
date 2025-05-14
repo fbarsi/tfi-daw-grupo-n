@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
+import { IsInt, IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 export class CreateOpcionesDto {
     @IsString()
@@ -9,8 +9,4 @@ export class CreateOpcionesDto {
     @IsInt()
     @IsNotEmpty()
     numero: number;
-
-    @IsInt()
-    @IsOptional()
-    id_pregunta?: number;
 }

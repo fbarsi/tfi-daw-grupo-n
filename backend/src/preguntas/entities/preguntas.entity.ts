@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,6 +9,7 @@ import {
 import { TiposRespuesta } from '../dto/create-preguntas.dto';
 import { Encuestas } from 'src/encuestas/entities/encuestas.entity';
 import { Opciones } from 'src/opciones/entities/opciones.entity';
+import { RespuestasAbiertas } from 'src/respuestas-abiertas/entities/respuestas-abiertas.entity';
 
 @Entity()
 export class Preguntas {
@@ -36,4 +36,7 @@ export class Preguntas {
 
   @OneToMany(() => Opciones, (opcion) => opcion.pregunta)
   opciones: Opciones[];
+
+  @OneToMany(() => RespuestasAbiertas, (respuesta_abierta) => respuesta_abierta.pregunta)
+  respuestas_abiertas: RespuestasAbiertas[];
 }

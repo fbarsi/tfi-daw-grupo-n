@@ -1,9 +1,11 @@
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
+import { RespuestasOpciones } from 'src/respuestas-opciones/entities/respuestas-opciones.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -21,4 +23,7 @@ export class Opciones {
   @ManyToOne(() => Preguntas, (pregunta) => pregunta.opciones)
   @JoinColumn({ name: 'id_pregunta' })
   pregunta: Preguntas;
+
+  @OneToMany(() => RespuestasOpciones, (respuesta_opcion) => respuesta_opcion.opcion)
+  respuestas_opciones: RespuestasOpciones[];
 }

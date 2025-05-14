@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { RespuestasService } from './respuestas.service';
 import { CreateRespuestasDto } from './dto/create-respuestas.dto';
 
@@ -6,9 +6,12 @@ import { CreateRespuestasDto } from './dto/create-respuestas.dto';
 export class RespuestasController {
   constructor(private readonly respuestasService: RespuestasService) {}
 
-  @Post()
-  create(@Body() createRespuestasDto: CreateRespuestasDto) {
-    return this.respuestasService.create(createRespuestasDto);
+  @Post(':codigo')
+  create(
+    @Query() codigo: string,
+    @Body() createRespuestasDto: CreateRespuestasDto,
+  ) {
+    return this.respuestasService.create(codigo, createRespuestasDto);
   }
 
   @Get()

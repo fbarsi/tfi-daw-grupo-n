@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateEncuestasDto } from './dto/create-encuestas.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Encuestas } from './entities/encuestas.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { PreguntasService } from 'src/preguntas/preguntas.service';
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
 import { Opciones } from 'src/opciones/entities/opciones.entity';
 
@@ -12,20 +11,19 @@ export class EncuestasService {
   constructor(
     @InjectRepository(Encuestas)
     private readonly encuestasRepository: Repository<Encuestas>,
-    private readonly preguntasService: PreguntasService,
 
     @InjectEntityManager()
     private readonly entityManager: EntityManager
   ) {}
 
-  async create(dto: CreateEncuestasDto) {
+  async create(encuestaDto: CreateEncuestasDto) {
     return this.entityManager.transaction(async (manager) => {
       const encuesta = manager.create(Encuestas, {
-        nombre: dto.nombre
+        nombre: encuestaDto.nombre
       });
       await manager.save(encuesta);
 
-      for (const preguntaDto of dto.preguntas) {
+      for (const preguntaDto of encuestaDto.preguntas) {
         const pregunta = manager.create(Preguntas, {
           numero: preguntaDto.numero,
           texto: preguntaDto.texto,
@@ -61,7 +59,7 @@ export class EncuestasService {
     });
   }
 
-  async findQuestions(id: number): Promise<Encuestas | null> {
+  async findQuestions(codigo_respuesta: string): Promise<Encuestas | null> {
     return await this.encuestasRepository
       .createQueryBuilder('encuesta')
       .leftJoinAndSelect('encuesta.preguntas', 'pregunta')
@@ -69,11 +67,13 @@ export class EncuestasService {
       .select([
         'encuesta.nombre',
         'pregunta.numero',
+        'pregunta.tipo',
         'pregunta.texto',
         'opcion.numero',
         'opcion.texto'
       ])
-      .where('encuesta.id = :id', {id})
+      .where('encuesta.codigo_respuesta = :codigo_respuesta', {codigo_respuesta})
       .getOne()
   }
 }
+

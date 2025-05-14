@@ -9,8 +9,7 @@ import { OpcionesService } from 'src/opciones/opciones.service';
 export class PreguntasService {
   constructor(
     @InjectRepository(Preguntas)
-    private readonly preguntasRepository: Repository<Preguntas>,
-    private readonly opcionesService: OpcionesService,
+    private readonly preguntasRepository: Repository<Preguntas>
   ) {}
 
   async create(createPreguntasDto: CreatePreguntasDto): Promise<Preguntas> {

@@ -1,16 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
+import { Respuestas } from 'src/respuestas/entities/respuestas.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class RespuestasAbiertas {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({type:'varchar', length:'255', nullable: false})
-    texto: string
+  @Column({ type: 'varchar', length: '255', nullable: false })
+  texto: string;
+    
+  @ManyToOne(() => Preguntas, (pregunta) => pregunta.respuestas_abiertas)
+  @JoinColumn({ name: 'id_pregunta' })
+  pregunta: Preguntas;
 
-    @Column({type:'int', nullable: false})
-    id_pregunta: number
-
-    @Column({type:'int', nullable: false})
-    id_respuesta: number
+  @ManyToOne(() => Respuestas, (respuesta) => respuesta.respuestas_abiertas)
+  @JoinColumn({ name: 'id_respuesta' })
+  respuesta: Respuestas;
 }

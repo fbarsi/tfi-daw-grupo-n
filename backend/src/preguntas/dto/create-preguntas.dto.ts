@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { CreateOpcionesDto } from 'src/opciones/dto/create-opciones.dto';
 
@@ -33,13 +33,9 @@ export class CreatePreguntasDto {
   })
   tipo: TiposRespuesta;
 
-  @IsInt()
-  @IsOptional()
-  id_encuesta?: number;
-
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateOpcionesDto)
   @IsOptional()
+  @Type(() => CreateOpcionesDto)
   opciones?: CreateOpcionesDto[];
 }

@@ -1,13 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { EncuestasService } from './encuestas.service';
 import { CreateEncuestasDto } from './dto/create-encuestas.dto';
-import { PreguntasService } from 'src/preguntas/preguntas.service';
 
 @Controller('encuestas')
 export class EncuestasController {
   constructor(
-    private readonly encuestasService: EncuestasService,
-    private readonly preguntasService: PreguntasService,
+    private readonly encuestasService: EncuestasService
   ) {}
 
   @Post()
@@ -20,13 +18,18 @@ export class EncuestasController {
     return this.encuestasService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.encuestasService.findOne(+id);
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.encuestasService.findOne(+id);
+  // }
+
+  @Get(':codigo_respuesta')
+  findQuestions(@Param('codigo_respuesta') codigo_respuesta: string) {
+    return this.encuestasService.findQuestions(codigo_respuesta);
   }
 
-  @Get(':id/preguntas')
-  findQuestions(@Param('id') id: string) {
-    return this.encuestasService.findQuestions(+id);
+  @Get(':codigo_resultados/estadisticas')
+  findStatistics(@Param('codigo_resultados') codigo_resultados: string) {
+    
   }
 }
