@@ -6,12 +6,9 @@ import { CreateRespuestasDto } from './dto/create-respuestas.dto';
 export class RespuestasController {
   constructor(private readonly respuestasService: RespuestasService) {}
 
-  @Post(':codigo')
-  create(
-    @Query() codigo: string,
-    @Body() createRespuestasDto: CreateRespuestasDto,
-  ) {
-    return this.respuestasService.create(codigo, createRespuestasDto);
+  @Post()
+  create(@Body() createRespuestasDto: CreateRespuestasDto) {
+    return this.respuestasService.create(createRespuestasDto);
   }
 
   @Get()

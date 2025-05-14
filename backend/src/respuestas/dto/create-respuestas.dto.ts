@@ -1,13 +1,22 @@
-import { IsArray, IsInt, IsOptional, IsString } from "class-validator";
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 
-class RespuestaOpcionDto {
+class PreguntasDto {
   @IsInt()
+  @IsNotEmpty()
   numero: number;
 
   @IsArray()
   @IsInt({ each: true })
   @IsOptional()
-  id_opciones?: number[];
+  opcionesNro?: number[];
 
   @IsString()
   @IsOptional()
@@ -15,8 +24,11 @@ class RespuestaOpcionDto {
 }
 
 export class CreateRespuestasDto {
-
+  @IsUUID()
+  @IsNotEmpty()
   codigo_respuesta: string;
 
-  preguntas: RespuestaOpcionDto[];
+  @IsArray()
+  @IsNotEmpty()
+  preguntas: PreguntasDto[];
 }

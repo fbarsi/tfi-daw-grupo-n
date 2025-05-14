@@ -2,7 +2,6 @@ import { Encuestas } from 'src/encuestas/entities/encuestas.entity';
 import { RespuestasAbiertas } from 'src/respuestas-abiertas/entities/respuestas-abiertas.entity';
 import { RespuestasOpciones } from 'src/respuestas-opciones/entities/respuestas-opciones.entity';
 import {
-  Column,
   Entity,
   JoinColumn,
   ManyToOne,
