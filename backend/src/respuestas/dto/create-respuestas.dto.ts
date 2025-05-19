@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class PreguntasDto {
+export class PreguntasDto {
   @IsInt()
   @IsNotEmpty()
   numero: number;

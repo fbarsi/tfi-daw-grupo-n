@@ -5,15 +5,18 @@ import { Encuestas } from './entities/encuestas.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
 import { Opciones } from 'src/opciones/entities/opciones.entity';
+import { PreguntasService } from 'src/preguntas/preguntas.service';
 
 @Injectable()
 export class EncuestasService {
   constructor(
+    private readonly preguntasService: PreguntasService,
+
     @InjectRepository(Encuestas)
     private readonly encuestasRepository: Repository<Encuestas>,
 
     @InjectEntityManager()
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
   ) {}
 
   async create(encuestaDto: CreateEncuestasDto) {
@@ -22,25 +25,14 @@ export class EncuestasService {
         nombre: encuestaDto.nombre
       });
       await manager.save(encuesta);
-
+      
       for (const preguntaDto of encuestaDto.preguntas) {
-        const pregunta = manager.create(Preguntas, {
-          numero: preguntaDto.numero,
-          texto: preguntaDto.texto,
-          tipo: preguntaDto.tipo,
-          encuesta
-        });
-        await manager.save(pregunta);
-
-        if (preguntaDto.opciones) {
-          const opciones = preguntaDto.opciones.map(opcionDto => 
-            manager.create(Opciones, { ...opcionDto, pregunta })
-          );
-          await manager.save(opciones);
-        }
+        await this.preguntasService.crearPreguntas(manager, preguntaDto, encuesta)
       }
 
-      return encuesta;
+      return {
+        codigo_respuesta: encuesta.codigo_respuesta, 
+        codigo_resultados: encuesta.codigo_resultados};
     });
   }
 
