@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsInt,
@@ -30,5 +31,7 @@ export class CreateRespuestasDto {
 
   @IsArray()
   @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => PreguntasDto)
   preguntas: PreguntasDto[];
 }
