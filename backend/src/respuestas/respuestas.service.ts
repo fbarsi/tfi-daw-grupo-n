@@ -91,6 +91,10 @@ export class RespuestasService {
     }
   }
 
+  async test(test) {
+    console.log(test)
+  }
+
   async findAll() {
     // return await this.respuestasRepository.find();
   }

@@ -11,6 +11,11 @@ export class RespuestasController {
     return this.respuestasService.create(createRespuestasDto);
   }
 
+  @Post('test')
+  test(@Body() test) {
+    return this.respuestasService.test(test);
+  }
+
   @Get()
   findAll() {
     return this.respuestasService.findAll();
