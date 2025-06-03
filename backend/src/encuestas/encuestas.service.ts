@@ -75,6 +75,7 @@ export class EncuestasService {
         'opcion.texto'
       ])
       .where('encuesta.codigo_respuesta = :codigo_respuesta', {codigo_respuesta})
+      .orderBy('pregunta.numero', 'ASC')
       .getOne()
   }
 

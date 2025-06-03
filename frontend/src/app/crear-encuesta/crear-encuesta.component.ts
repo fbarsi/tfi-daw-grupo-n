@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-crear-encuesta',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, QRCodeComponent],
   templateUrl: './crear-encuesta.component.html',
   styleUrl: './crear-encuesta.component.css'
 })
@@ -14,6 +15,10 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 
 export class CrearEncuestaComponent {
   encuesta: FormGroup;
+  mostrarQR = false;
+  qrResponder = '';
+  urlResultados = '';
+  baseUrl = 'http://localhost:4200';
   listaTipos = [
     {value: 'abierta', label: 'Abierta'},
     {value: 'opcion_multiple_seleccion_simple', label: 'Opcion simple'},
@@ -26,7 +31,7 @@ export class CrearEncuestaComponent {
     private fb: FormBuilder
   ) {
     this.encuesta = this.fb.group({
-      nombre: this.fb.control('Prueba'),
+      nombre: this.fb.control('Prueba 2'),
       preguntas: this.fb.array([this.crearPregunta()])
     });
   }
@@ -36,7 +41,7 @@ export class CrearEncuestaComponent {
         numero: [1],
         texto: [''],
         tipo: ['abierta'],
-        opciones: this.fb.array([])
+        opciones: this.fb.array([this.crearOpcion()])
       })
   }
 
@@ -95,7 +100,21 @@ export class CrearEncuestaComponent {
   onSubmit() {
     if (this.encuesta.valid) {
       const encuestaTerminada = this.encuesta.value
+
+      encuestaTerminada.preguntas.forEach((pregunta: any) => {
+        if (pregunta.tipo === 'abierta') {
+          pregunta.opciones = [];
+        }
+      });
+
       this.http.post('api/encuestas', encuestaTerminada).subscribe({
+        next: (res: any) => {
+          console.log(res);
+          this.qrResponder = `${this.baseUrl}/responder/${res.codigo_respuesta}`;
+          this.urlResultados = `${this.baseUrl}/resultados/${res.codigo_resultados}`;
+          
+          this.mostrarQR = true;
+        },
         error: (err) => console.error('Error al enviar:', err)
     });
       console.log(this.encuesta.value);

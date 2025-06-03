@@ -1,11 +1,11 @@
 <form *ngIf="!encuestaEnviada && encuesta" [formGroup]="testForm" (ngSubmit)="onSubmit()">
-  <h2>{{ encuesta.nombre }}</h2>
-  <div *ngFor="let pregunta of preguntas" class="pregunta">
+	<h2>{{ encuesta.nombre }}</h2>
+	<div *ngFor="let pregunta of preguntas" class="pregunta">
 		<h3>{{ pregunta.numero }}. {{ pregunta.texto }}</h3>
 
-    <div *ngIf="pregunta.tipo === 'abierta'">
-      <textarea [formControlName]="'pregunta_' + pregunta.numero"></textarea>
-    </div>
+		<div *ngIf="pregunta.tipo === 'abierta'">
+		<textarea [formControlName]="'pregunta_' + pregunta.numero"></textarea>
+		</div>
 
 		<div *ngIf="pregunta.tipo === 'opcion_multiple_seleccion_simple'">
 			<div *ngFor="let opcion of pregunta.opciones">
@@ -35,10 +35,10 @@
 				</div>
 			</div>
 		</div>
-  </div>
-  <button type="submit" [disabled]="testForm.invalid">Enviar</button>
+	</div>
+	<button type="submit" [disabled]="testForm.invalid">Enviar</button>
 </form>
 
 <div *ngIf="encuestaEnviada">
-  <h2>Encuesta enviada correctamente!</h2>
+	<h2>Encuesta enviada correctamente!</h2>
 </div>

@@ -1,37 +1,55 @@
 <div>
-    <form [formGroup]="encuesta" (ngSubmit)="onSubmit()">
-        <div formArrayName="preguntas">
-            <div *ngFor="let pregunta of preguntasArray.controls; let i = index" [formGroupName]="i">
-                <h3>Pregunta {{i + 1}}</h3>
-                <input type="text" formControlName="texto">
-                <select name="" id="" formControlName="tipo">
-                    <option *ngFor="let tipo of listaTipos" [value]="tipo.value">{{ tipo.label }}</option>
-                </select>
-                <button type="button" (click)="eliminarPregunta(i)">
-                    Eliminar Pregunta
-                </button>
-                <div *ngIf="mostrarOpciones(i)">
-                    <div formArrayName="opciones">
-                        <div *ngFor="let opcion of getOpcionesArray(i).controls; let j = index" [formGroupName]="j">
-                            <label>Opcion {{j + 1}}. </label>
-                            <input type="text" formControlName="texto">
-                            <input type="hidden" formArrayName="numero">
-                            <button type="button" (click)="eliminarOpcion(i, j)">
-                                Eliminar Opcion
-                            </button>
-                        </div>
-                        <button type="button" (click)="agregarOpcion(i)">
-                            Nueva Opcion
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <button type="button" (click)="agregarPregunta()">
-                Nueva Pregunta
-            </button>
-        </div>
-        <button type="submit">
-            Guardar
+  <form [formGroup]="encuesta" (ngSubmit)="onSubmit()">
+    <div formArrayName="preguntas">
+      <div
+        *ngFor="let pregunta of preguntasArray.controls; let i = index"
+        [formGroupName]="i"
+      >
+        <h3>Pregunta {{ i + 1 }}</h3>
+        <input type="text" formControlName="texto" />
+        <select name="" id="" formControlName="tipo">
+          <option *ngFor="let tipo of listaTipos" [value]="tipo.value">
+            {{ tipo.label }}
+          </option>
+        </select>
+        <button type="button" (click)="eliminarPregunta(i)">
+          Eliminar Pregunta
         </button>
-    </form>
+        <div *ngIf="mostrarOpciones(i)">
+          <div formArrayName="opciones">
+            <div
+              *ngFor="let opcion of getOpcionesArray(i).controls; let j = index"
+              [formGroupName]="j"
+            >
+              <label>Opcion {{ j + 1 }}. </label>
+              <input type="text" formControlName="texto" />
+              <input type="hidden" formArrayName="numero" />
+              <button type="button" (click)="eliminarOpcion(i, j)">
+                Eliminar Opcion
+              </button>
+            </div>
+            <button type="button" (click)="agregarOpcion(i)">
+              Nueva Opcion
+            </button>
+          </div>
+        </div>
+      </div>
+      <button type="button" (click)="agregarPregunta()">Nueva Pregunta</button>
+    </div>
+    <button type="submit">Guardar</button>
+  </form>
+
+  <div *ngIf="mostrarQR">
+    <h3>Enlaces</h3>
+    <div>
+      <qrcode
+        [qrdata]="qrResponder"
+        [width]="200"
+        [errorCorrectionLevel]="'M'"
+      ></qrcode>
+      <a>{{ qrResponder }}</a>
+      <br>
+      <a>{{ urlResultados }}</a>
+    </div>
+  </div>
 </div>
