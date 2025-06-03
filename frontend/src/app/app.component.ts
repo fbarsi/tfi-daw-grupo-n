@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CrearEncuestaComponent } from "./crear-encuesta/crear-encuesta.component";
 
 @Component({
   selector: 'app-root',
