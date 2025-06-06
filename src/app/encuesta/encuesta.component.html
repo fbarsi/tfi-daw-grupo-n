@@ -1,0 +1,82 @@
+<div class="contenedor">
+    <h1>Crear encuesta</h1>
+    <form [formGroup]="encuestaForm" class="encuesta-form">
+
+        <!-- Encuesta nombre -->
+        <label for="nombre-encuesta" class="form-label">Ingrese nombre de encuesta: </label>
+        <input type="text" id="nombre-encuesta" formControlName="nombre" class="form-control form-control-sm" />
+
+        <div class="mensaje-error"
+            *ngIf="encuestaForm.get('nombre')?.invalid && (encuestaForm.get('nombre')?.dirty || encuestaForm.get('nombre')?.touched)">
+            <p *ngIf="encuestaForm.get('nombre')?.hasError('required')"> Nombre de encuesta es requerido</p>
+            <p *ngIf="encuestaForm.get('nombre')?.hasError('minlength')"> Nombre de encuesta debe tener minimo 3
+                caracteres</p>
+        </div>
+
+
+        <!-- Preguntas -->
+        <div formArrayName="preguntas">
+            <div *ngFor="let pregunta of preguntas.controls; let i = index" [formGroupName]="i" class="pregunta">
+
+                <h4>Pregunta numero {{i+ 1}}</h4>
+                <label for="pregunta" class="form-label">Ingrese pregunta</label>
+                <input type="text" id="pregunta" formControlName="texto" class="form-control form-control-sm" />
+                <br />
+                <div class="mensaje-error"
+                            *ngIf="preguntas.at(i).get('texto')?.invalid && preguntas.at(i).get('texto')?.dirty || preguntas.at(i).get('texto')?.touched">
+                            <p *ngIf="preguntas.at(i).get('texto')?.hasError('required')">requerido
+                            </p>
+                            <p *ngIf="preguntas.at(i).get('texto')?.hasError('minlength')"> minimo 2 caracteres</p>
+                        </div>
+
+
+                <label for="tipo" class="form-label">Seleccione tipo de pregunta</label>
+                <select id="tipo" formControlName="tipo" class="form-select">
+                    <option value="abierta" selected>Abierta</option>
+                    <option value="opcion_multiple_seleccion_simple">Opcion simple</option>
+                    <option value="opcion_multiple_seleccion_multiple">Opcion múltiple</option>
+                </select>
+
+                <!--Lo que necesito es que por cada opcion de cada pregunta se fije sin el tipo es abierta muestra prg abierta, cerrada preg cerrada, cerrada opcion multiple.-->
+                <br />
+                <div formArrayName="opciones">
+                    <div *ngFor="let opcion of getOpciones(i).controls; let j = index" [formGroupName]="j">
+
+                        <div *ngIf="preguntas.at(i).get('tipo')?.value === 'opcion_multiple_seleccion_simple'">
+                            <label for="op" class="form-label">Opción {{ j + 1 }}:</label>
+                            <input id="op" type="text" formControlName="texto" class="form-control form-control-sm">
+                            <button (click)="borrarOpcion(i,j)" class="btn btn-outline-danger">X</button>
+                        </div>
+
+                        <div *ngIf="preguntas.at(i).get('tipo')?.value === 'opcion_multiple_seleccion_multiple'"
+                            class="contenedor-opcion">
+                            <label class="form-label">Opción {{ j + 1 }}:</label>
+                            <input id="op" type="text" formControlName="texto" class="form-control form-control-sm">
+                            <button (click)="borrarOpcion(i,j)" class="btn btn-outline-danger">X</button>
+                        </div>
+
+                        <div class="mensaje-error"
+                            *ngIf="opcion.get('texto')?.invalid && opcion.get('texto')?.dirty || opcion.get('texto')?.touched">
+                            <p *ngIf="opcion.get('texto')?.hasError('required')">requerido
+                            </p>
+                            <p *ngIf="opcion.get('texto')?.hasError('minlength')"> minimo 2 caracteres</p>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+                <button (click)="crearOpcion(i)" *ngIf="preguntas.at(i).get('tipo')?.value !== 'abierta'"
+                    class="btn btn-primary">Agregar
+                    opcion</button>
+                <button (click)="borrarPregunta(i)" class="btn btn-outline-danger">Borrar pregunta</button>
+            </div>
+
+        </div>
+
+        <button (click)="crearPregunta()" class="btn btn-primary">Agregar pregunta</button>
+        <button (click)="enviarEncuesta()" class="btn btn-primary">Enviar encuesta</button>
+    </form>
+</div>

@@ -1,0 +1,30 @@
+<h3>Encuesta</h3>
+<h1>{{ encuesta?.nombre }}</h1>
+<div *ngFor="let pregunta of encuesta?.preguntas; let i = index">
+  <p>{{ pregunta.numero }}, {{ pregunta.texto }}</p>
+  <ng-container *ngIf="pregunta.tipo !== 'abierta'">
+    <div *ngFor="let opcion of pregunta.opciones; let j = index">
+      <ng-container *ngIf="pregunta.tipo === 'opcion_multiple_seleccion_simple'">
+        <label>Opcion n°{{opcion.numero}}</label>
+        <input type="radio" name="pregunta{{ i }}" id="opcion{{ i }}_{{ j }}" />
+        <label for="opcion{{ i }}_{{ j }}">{{ opcion.texto }}</label>
+      </ng-container>
+
+      <ng-container *ngIf="pregunta.tipo === 'opcion_multiple_seleccion_multiple'">
+        <label>Opcion n°{{opcion.numero}}</label>
+        <input type="checkbox" name="pregunta{{ i }}" id="opcion{{ i }}_{{ j }}"/>
+        <label for="opcion{{ i }}_{{ j }}">{{ opcion.texto }}</label>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="pregunta.tipo === 'abierta'">
+    <label>Pregunta  n°{{pregunta.numero}}</label>
+    <textarea
+      name="textarea"
+      rows="5"
+      cols="40"
+      placeholder="Ingrese su respuesta"
+    ></textarea>
+  </ng-container>
+</div>

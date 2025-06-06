@@ -1,0 +1,28 @@
+.contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.pregunta {
+    background-color: rgb(226, 222, 217);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.contenedor-opcion{
+    display: flex;
+    flex-direction: row;
+}
+
+.encuesta-form {
+    width: 50%;
+}
+
+.mensaje-error{
+    color: red;
+}
