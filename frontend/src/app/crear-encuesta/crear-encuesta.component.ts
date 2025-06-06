@@ -31,7 +31,7 @@ export class CrearEncuestaComponent {
     private fb: FormBuilder
   ) {
     this.encuesta = this.fb.group({
-      nombre: this.fb.control('Prueba 2'),
+      nombre: this.fb.control('Titulo encuesta'),
       preguntas: this.fb.array([this.crearPregunta()])
     });
   }

@@ -1,55 +1,68 @@
 <div>
   <form [formGroup]="encuesta" (ngSubmit)="onSubmit()">
+    <div class="contenedor">
+      <!-- <h2>Titulo de la encuesta</h2> -->
+      <input class="titulo" type="text" formControlName="nombre">
+    </div>
     <div formArrayName="preguntas">
-      <div
-        *ngFor="let pregunta of preguntasArray.controls; let i = index"
-        [formGroupName]="i"
-      >
-        <h3>Pregunta {{ i + 1 }}</h3>
-        <input type="text" formControlName="texto" />
-        <select name="" id="" formControlName="tipo">
-          <option *ngFor="let tipo of listaTipos" [value]="tipo.value">
-            {{ tipo.label }}
-          </option>
-        </select>
-        <button type="button" (click)="eliminarPregunta(i)">
-          Eliminar Pregunta
-        </button>
-        <div *ngIf="mostrarOpciones(i)">
-          <div formArrayName="opciones">
-            <div
-              *ngFor="let opcion of getOpcionesArray(i).controls; let j = index"
-              [formGroupName]="j"
-            >
-              <label>Opcion {{ j + 1 }}. </label>
-              <input type="text" formControlName="texto" />
-              <input type="hidden" formArrayName="numero" />
-              <button type="button" (click)="eliminarOpcion(i, j)">
-                Eliminar Opcion
-              </button>
-            </div>
-            <button type="button" (click)="agregarOpcion(i)">
-              Nueva Opcion
+      @for (pregunta of preguntasArray.controls; track i; let i = $index) {
+        <div
+          [formGroupName]="i"
+          class="contenedor contenedorPreguntas"
+        >
+          <h3>Pregunta {{ i + 1 }}</h3>
+          <div class="contenedor-2">
+            <input type="text" formControlName="texto" />
+            <select name="" id="" formControlName="tipo">
+              @for (tipo of listaTipos; track tipo.value) {
+                <option [value]="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              }
+            </select>
+            <button type="button" (click)="eliminarPregunta(i)">
+              X
             </button>
           </div>
+          @if (mostrarOpciones(i)) {
+            <div class="contenedorOpciones" formArrayName="opciones">
+              @for (opcion of getOpcionesArray(i).controls; track j; let j = $index) {
+                <div [formGroupName]="j">
+                  <label class="opcionLabel">Opcion {{ j + 1 }}</label>
+                  <input type="text" formControlName="texto" />
+                  <input type="hidden" formArrayName="numero" />
+                  <button type="button" (click)="eliminarOpcion(i, j)">
+                    X
+                  </button>
+                </div>
+              }
+            </div>
+            <button class="boton" type="button" (click)="agregarOpcion(i)">
+              Nueva Opcion
+            </button>
+          }
         </div>
-      </div>
-      <button type="button" (click)="agregarPregunta()">Nueva Pregunta</button>
+      }
     </div>
-    <button type="submit">Guardar</button>
+    <div class="contenedor">
+      <button type="button" (click)="agregarPregunta()">Nueva Pregunta</button>
+      <button type="submit">Guardar</button>
+    </div>
   </form>
 
-  <div *ngIf="mostrarQR">
-    <h3>Enlaces</h3>
+  @if (mostrarQR) {
     <div>
-      <qrcode
-        [qrdata]="qrResponder"
-        [width]="200"
-        [errorCorrectionLevel]="'M'"
-      ></qrcode>
-      <a>{{ qrResponder }}</a>
-      <br>
-      <a>{{ urlResultados }}</a>
+      <h3>Enlaces</h3>
+      <div>
+        <qrcode
+          [qrdata]="qrResponder"
+          [width]="200"
+          [errorCorrectionLevel]="'M'"
+        ></qrcode>
+        <a>{{ qrResponder }}</a>
+        <br>
+        <a>{{ urlResultados }}</a>
+      </div>
     </div>
-  </div>
+  }
 </div>
