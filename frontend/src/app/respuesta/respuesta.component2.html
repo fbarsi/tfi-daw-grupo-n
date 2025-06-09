@@ -1,0 +1,36 @@
+<h3>Encuesta</h3>
+<h1>{{ encuesta?.nombre }}</h1>
+
+<form [formGroup]="respuesta">
+  <div formArrayName="preguntas">
+    <!--esto recorre el form no el objeto encuesta-->
+    <div *ngFor="let pregunta of preguntas.controls; let i = index" [formGroupName]="i">
+      <p>{{ encuesta?.preguntas[i].numero }}, {{ encuesta?.preguntas[i].texto }}</p>
+
+
+      <ng-container *ngIf="encuesta?.preguntas[i].tipo !== 'abierta'">
+
+        <div *ngFor="let opcion of encuesta?.preguntas[i].opciones; let j = index">
+          <ng-container *ngIf="encuesta?.preguntas[i].tipo === 'opcion_multiple_seleccion_simple'">
+            <label>Opcion n°{{opcion.numero}}</label>
+            <input formControlName="opcionesNro" type="radio" name="pregunta{{ i }}" id="opcion{{ i }}_{{ j }}" />
+            <label for="opcion{{ i }}_{{ j }}">{{ opcion.texto }}</label>
+          </ng-container>
+
+          <ng-container *ngIf="pregunta.tipo === 'opcion_multiple_seleccion_multiple'">
+            <label>Opcion n°{{opcion.numero}}</label>
+            <input formControlName="opcionesNro" type="checkbox" name="pregunta{{ i }}" id="opcion{{ i }}_{{ j }}" />
+            <label for="opcion{{ i }}_{{ j }}">{{ opcion.texto }}</label>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="encuesta?.preguntas[i].tipo === 'abierta'">
+        <label>Pregunta n°{{pregunta.numero}}</label>
+        <textarea name="textarea" rows="5" cols="40" placeholder="Ingrese su respuesta"
+          formControlName="texto"></textarea>
+      </ng-container>
+    </div>
+  </div>
+  <button class="btn btn-primary" (click)="enviarRespuesta()">Enviar</button>
+</form>

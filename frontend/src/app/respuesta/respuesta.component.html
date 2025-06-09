@@ -1,0 +1,48 @@
+<h3>Encuesta</h3>
+<h1>{{encuesta.nombre}}</h1>
+
+<form [formGroup]="respuesta"> <!--Form respuesta completa-->
+  <div formArrayName="preguntas"> <!--Representa la parte de preguntas del form-->
+
+    <!--Por cada una de las preguntas a rellenar-->
+    <div *ngFor="let preguntaForm of preguntas.controls; let i = index" [formGroupName]="i">
+
+      <!--Nos traemos de la bbdd la info de las preguntas-->
+      <p>{{encuesta.preguntas[i].numero}},{{encuesta.preguntas[i].texto}}</p>
+
+      <!--PREGUNTA ABIERTA-->
+      <ng-container *ngIf="encuesta.preguntas[i].tipo === 'abierta'">
+        <label>Respuesta:</label>
+        <textarea rows="5" cols="40" placeholder="Ingrese respuesta" formControlName="texto"></textarea>
+      </ng-container>
+
+      <!--PREGUNTA SIMPLE-->
+      <ng-container *ngIf="encuesta.preguntas[i].tipo === 'opcion_multiple_seleccion_simple'">
+        <div *ngFor="let opcion of encuesta.preguntas[i].opciones; let j = index">
+          <label>Opcion n° {{opcion.numero}}: {{opcion.texto}}
+          <input type="radio" value="{{opcion.numero}}" name="opcion_{{i}}" (change)="onCheckChange($event, i)" />
+          </label>
+        </div>
+        <p>Seleccionadas {{ preguntaForm.get('opcionesNro')?.value.sort() }}</p>
+      </ng-container>
+
+      <!--PREGUNTA MULTIPLE-->
+      <ng-container *ngIf="encuesta.preguntas[i].tipo === 'opcion_multiple_seleccion_multiple'">
+        <div formArrayName="opcionesNro">
+          <div *ngFor="let opcion of encuesta.preguntas[i].opciones; let j = index">
+            <label>Opción n°{{ opcion.numero }}: {{ opcion.texto }}
+            <input type="checkbox" value="{{opcion.numero}}" (change)="onCheckChange($event, i)"
+            name="opcion_{{i}}"
+            />
+            </label>
+          </div>
+          <p>Seleccionadas {{ preguntaForm.get('opcionesNro')?.value.sort() }}</p>
+        </div>
+      </ng-container>
+
+
+
+    </div>
+  </div>
+  <button class="btn btn-primary" type="button" (click)="enviarRespuesta()"> Enviar</button>
+</form>

@@ -1,15 +1,8 @@
 import { Routes } from '@angular/router';
-import { ResponderEncuestaComponent } from './responder-encuesta/responder-encuesta.component';
-import { CrearEncuestaComponent } from './crear-encuesta/crear-encuesta.component';
+import { RespuestaComponent } from './respuesta/respuesta.component';
+import { EncuestaComponent } from './encuesta/encuesta.component';
 
 export const routes: Routes = [
-    {
-        path: 'responder/:codigo',
-        component: ResponderEncuestaComponent
-    },
-    {
-        path: 'crear',
-        component: CrearEncuestaComponent
-    }
-
+    {path: 'respuesta/:id', component: RespuestaComponent},
+    { path: '', component: EncuestaComponent }
 ];
