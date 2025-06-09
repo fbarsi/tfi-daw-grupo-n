@@ -8,6 +8,7 @@ import { Opciones } from 'src/opciones/entities/opciones.entity';
 import { PreguntasService } from 'src/preguntas/preguntas.service';
 import { Respuestas } from 'src/respuestas/entities/respuestas.entity';
 import { resolve } from 'path';
+import { Parser } from '@json2csv/plainjs';
 
 @Injectable()
 export class EncuestasService {
@@ -147,6 +148,31 @@ export class EncuestasService {
     // }
     // return todasLasPreguntas;
   }
+  async exportEstadisticasToCsv(codigo_resultados: string): Promise<string> {
+  const estadisticas = await this.obtenerEstadisticas(codigo_resultados);
+  // const datosParaCsv = [];
+  const datosParaCsv: Record<string, any>[] = [];
+  for (const respuesta of estadisticas) {
+    for (const pregunta of respuesta) {
+      const fila = {
+        pregunta_numero: pregunta.numero,
+        tipo_pregunta: pregunta.tipo || 'opcion', 
+        opcion_numero: pregunta.opciones?.[0]?.numero || 'N/A',
+        opcion_texto: pregunta.opciones?.[0]?.texto || pregunta.respuestas_abiertas?.[0]?.texto || 'N/A',
+      };
+      datosParaCsv.push(fila);
+    }
+  }
+  const camposCsv = [
+    { label: 'Número Pregunta', value: 'pregunta_numero' },
+    { label: 'Tipo', value: 'tipo_pregunta' },
+    { label: 'Opción Número', value: 'opcion_numero' },
+    { label: 'Respuesta', value: 'opcion_texto' },
+  ];
+
+  const parser = new Parser({ fields: camposCsv });
+  return parser.parse(datosParaCsv);
+}
 
 
   // async obtenerEstadisticas(codigo_resultados: string) {
