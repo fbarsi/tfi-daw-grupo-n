@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { from, Subject } from 'rxjs';
-import { text } from 'stream/consumers';
-import { join } from 'path';
 import hbs from 'nodemailer-express-handlebars';
+import * as path from 'path';
 
 
 @Injectable()
@@ -26,10 +24,10 @@ export class EmailService {
         'compile',
         hbs({
             viewEngine: {
-                partialsDir: join(__dirname,'..','..','templates'),
+                partialsDir: path.join(__dirname, 'templates'),
                 defaultLayout:false,
             },
-            viewPath:join(__dirname,'..','..','templates'),
+            viewPath:path.join(__dirname, 'templates'),
             extName: '.hbs',
         }),
     );
