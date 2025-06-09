@@ -12,16 +12,22 @@ import { Encuestas } from './encuestas/entities/encuestas.entity';
 import { Opciones } from './opciones/entities/opciones.entity';
 import { RespuestasAbiertas } from './respuestas-abiertas/entities/respuestas-abiertas.entity';
 import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-opciones.entity';
+import { EmailModule } from './email/email.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal:true,
+    })
+    ,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1234',
-      database: 'tfi-db',
+      password: 'syra123',
+      database: 'encuestas',
       entities: [
         Encuestas, 
         Preguntas, 
@@ -37,6 +43,7 @@ import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-op
     PreguntasModule, 
     RespuestasModule, 
     RespuestasAbiertasModule,
-    RespuestasOpcionesModule], 
+    RespuestasOpcionesModule,
+    EmailModule], 
 })
 export class AppModule {}
