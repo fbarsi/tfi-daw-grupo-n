@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Encuesta, Pregunta } from '../models/encuesta.model';
+import { ApiService } from '../api/api.service';
 
 @Component({
   selector: 'app-responder-encuesta',
@@ -22,14 +23,15 @@ export class ResponderEncuestaComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private apiService: ApiService
   ) {
     this.testForm = this.fb.group({});
   }
 
   ngOnInit() {
     this.codigoRespuesta = this.route.snapshot.params['codigo'];
-    this.http.get<Encuesta>(`/api/encuestas/${this.codigoRespuesta}`)
+    this.apiService.obtenerEncuesta(this.codigoRespuesta)
       .subscribe({
         next: (data) => {
           this.encuesta = data,
@@ -89,7 +91,7 @@ export class ResponderEncuestaComponent implements OnInit {
         })
       }
 
-      this.http.post('api/respuestas', respuestas).subscribe({
+      this.apiService.enviarRespuestas(respuestas).subscribe({
         next: () => this.encuestaEnviada = true,
         error: (err) => console.error('Error al enviar:', err)
     });

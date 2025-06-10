@@ -1,11 +1,11 @@
 <div>
   <form [formGroup]="encuesta" (ngSubmit)="onSubmit()">
     <div class="contenedor">
-      <!-- <h2>Titulo de la encuesta</h2> -->
+      <h2>Titulo de la encuesta</h2>
       <input class="titulo" type="text" formControlName="nombre">
     </div>
     <div formArrayName="preguntas">
-      @for (pregunta of preguntasArray.controls; track i; let i = $index) {
+      @for (pregunta of preguntasArray.controls; track pregunta.value; let i = $index) {
         <div
           [formGroupName]="i"
           class="contenedor contenedorPreguntas"
@@ -26,7 +26,7 @@
           </div>
           @if (mostrarOpciones(i)) {
             <div class="contenedorOpciones" formArrayName="opciones">
-              @for (opcion of getOpcionesArray(i).controls; track j; let j = $index) {
+              @for (opcion of getOpcionesArray(i).controls; track opcion.value; let j = $index) {
                 <div [formGroupName]="j">
                   <label class="opcionLabel">Opcion {{ j + 1 }}</label>
                   <input type="text" formControlName="texto" />
@@ -59,9 +59,9 @@
           [width]="200"
           [errorCorrectionLevel]="'M'"
         ></qrcode>
-        <a>{{ qrResponder }}</a>
+        <a [href]="qrResponder">{{ qrResponder }}</a>
         <br>
-        <a>{{ urlResultados }}</a>
+        <a [href]="urlResultados">{{ urlResultados }}</a>
       </div>
     </div>
   }

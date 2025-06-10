@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { ApiService } from '../api/api.service';
 
 @Component({
   selector: 'app-crear-encuesta',
@@ -28,7 +29,8 @@ export class CrearEncuestaComponent {
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private apiService: ApiService
   ) {
     this.encuesta = this.fb.group({
       nombre: this.fb.control('Titulo encuesta'),
@@ -107,7 +109,7 @@ export class CrearEncuestaComponent {
         }
       });
 
-      this.http.post('api/encuestas', encuestaTerminada).subscribe({
+      this.apiService.crearEncuesta(encuestaTerminada).subscribe({
         next: (res: any) => {
           console.log(res);
           this.qrResponder = `${this.baseUrl}/responder/${res.codigo_respuesta}`;
