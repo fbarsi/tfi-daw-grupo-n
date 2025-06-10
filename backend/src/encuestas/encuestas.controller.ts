@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Response } from '@nestjs/common';
 import { EncuestasService } from './encuestas.service';
 import { CreateEncuestasDto } from './dto/create-encuestas.dto';
 
@@ -26,10 +26,22 @@ export class EncuestasController {
   @Get(':codigo_respuesta')
   findQuestions(@Param('codigo_respuesta') codigo_respuesta: string) {
     return this.encuestasService.findQuestions(codigo_respuesta);
+    
   }
 
-  @Get(':codigo_resultados/estadisticas')
+  @Get('estadisticas/:codigo_resultados')
   findStatistics(@Param('codigo_resultados') codigo_resultados: string) {
-    
+    return this.encuestasService.obtenerEstadisticas(codigo_resultados);
+  }
+
+  @Get('estadisticas/csv/:codigo_resultados')
+    async exportEstadisticasToCsv(
+    @Param('codigo_resultados') codigo_resultados: string,
+    @Response() res,
+    ) {
+  const csv = await this.encuestasService.exportEstadisticasToCsv(codigo_resultados);
+  res.header('Content-Type', 'text/csv');
+  res.attachment(`estadisticas_${codigo_resultados}.csv`);
+  res.send(csv);
   }
 }

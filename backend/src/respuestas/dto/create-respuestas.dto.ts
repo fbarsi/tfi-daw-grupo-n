@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsInt,
@@ -8,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class PreguntasDto {
+export class PreguntasDto {
   @IsInt()
   @IsNotEmpty()
   numero: number;
@@ -30,5 +31,7 @@ export class CreateRespuestasDto {
 
   @IsArray()
   @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => PreguntasDto)
   preguntas: PreguntasDto[];
 }

@@ -34,8 +34,8 @@ export class CreatePreguntasDto {
   tipo: TiposRespuesta;
 
   @IsArray()
-  @ValidateNested({ each: true })
   @IsOptional()
+  @ValidateNested({ each: true })
   @Type(() => CreateOpcionesDto)
   opciones?: CreateOpcionesDto[];
 }
