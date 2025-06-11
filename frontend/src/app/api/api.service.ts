@@ -15,11 +15,12 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/encuestas`, encuestaData);
   }
 
-  obtenerEncuesta(codigo: string): Observable<Encuesta> {
-    return this.http.get<Encuesta>(`${this.baseUrl}/encuestas/${codigo}`);
+  obtenerEncuesta(codigo_respuesta: string): Observable<Encuesta> {
+    return this.http.get<Encuesta>(`${this.baseUrl}/encuestas/${codigo_respuesta}`);
   }
 
   enviarRespuestas(respuestasData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/respuestas`, respuestasData);
   }
 }
+
