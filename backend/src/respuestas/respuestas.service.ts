@@ -1,13 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateRespuestasDto, PreguntasDto } from './dto/create-respuestas.dto';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { Respuestas } from './entities/respuestas.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+
+import { CreateRespuestasDto, PreguntaRespuestaDto } from './dto/create-respuestas.dto';
 import { Encuestas } from 'src/encuestas/entities/encuestas.entity';
+import { Respuestas } from './entities/respuestas.entity';
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
-import { RespuestasAbiertas } from 'src/respuestas-abiertas/entities/respuestas-abiertas.entity';
-import { RespuestasOpciones } from 'src/respuestas-opciones/entities/respuestas-opciones.entity';
-import { Opciones } from 'src/opciones/entities/opciones.entity';
 import { RespuestasAbiertasService } from 'src/respuestas-abiertas/respuestas-abiertas.service';
 import { RespuestasOpcionesService } from 'src/respuestas-opciones/respuestas-opciones.service';
 
@@ -16,61 +14,58 @@ export class RespuestasService {
   constructor(
     private readonly respuestasAbiertasService: RespuestasAbiertasService,
     private readonly respuestasOpcionesService: RespuestasOpcionesService,
-
     @InjectEntityManager()
-    private readonly entityManager: EntityManager,
+    private readonly manager: EntityManager,
   ) {}
 
-  async create(createRespuestasDto: CreateRespuestasDto) {
-    return this.entityManager.transaction(async (manager) => {
-      // obtener el id de la encuesta por el codigo de respuesta
-      const encuesta = await manager.findOne(Encuestas, {
-        where: { codigo_respuesta: createRespuestasDto.codigo_respuesta },
+  async create(dto: CreateRespuestasDto) {
+    return this.manager.transaction(async (m) => {
+      const encuesta = await m.findOne(Encuestas, { where: { id: dto.encuestaId } });
+      if (!encuesta) throw new BadRequestException('Encuesta no encontrada');
+
+      const respuesta = m.create(Respuestas, {
+        encuesta,
+        codigoRespuesta: dto.codigo_respuesta,
       });
-      if (!encuesta) {
-        throw new Error('La encuesta no existe');
+      await m.save(respuesta);
+
+      for (const preguntaDto of dto.preguntas as PreguntaRespuestaDto[]) {
+        const pregunta = await m.findOne(Preguntas, {
+          where: { numero: preguntaDto.preguntaId, encuesta: { id: encuesta.id } }
+        });
+        if (!pregunta) continue;
+
+        await this.procesarTipoDePregunta(m, preguntaDto, pregunta, respuesta);
       }
 
-      // instanciar la respuesta
-      const respuesta = manager.create(Respuestas, { encuesta }); 
-      await manager.save(respuesta);
-
-      await this.procesarPreguntas(manager, createRespuestasDto, encuesta, respuesta);
+      return respuesta;
     });
   }
 
-  async procesarPreguntas(
-    manager: EntityManager,
-    createRespuestasDto: CreateRespuestasDto,
-    encuesta: Encuestas,
-    respuesta: Respuestas,
-  ) {
-    // iterar las preguntas respondidas
-    for (const preguntaDto of createRespuestasDto.preguntas) {
-      // obtener el id de la pregunta por el id de la encuesta y el numero de pregunta
-      const pregunta = await manager.findOne(Preguntas, {
-        where: { numero: preguntaDto.numero, encuesta: { id: encuesta.id } },
-      });
-
-      if (!pregunta) continue;
-
-      // clasificar por respuesta abierta o por opciones basado en el tipo de pregunta
-      await this.procesarTipoDePregunta(manager, preguntaDto, pregunta, respuesta);
-    }
-  }
-
-  async procesarTipoDePregunta(
-    manager: EntityManager,
-    preguntaDto: PreguntasDto,
+  private async procesarTipoDePregunta(
+    m: EntityManager,
+    preguntaDto: PreguntaRespuestaDto,
     pregunta: Preguntas,
     respuesta: Respuestas,
   ) {
     switch (pregunta.tipo) {
       case 'abierta':
-        if (preguntaDto.texto) {
+        if (preguntaDto.textoLibre) {
           await this.respuestasAbiertasService.crearRespuestaAbierta(
-            manager,
-            preguntaDto.texto,
+            m,
+            preguntaDto.textoLibre,
+            pregunta,
+            respuesta
+          );
+        }
+        break;
+
+      case 'opcion_multiple_seleccion_multiple':
+        if (preguntaDto.seleccionMultiple) {
+          const ids = preguntaDto.seleccionMultiple.map(s => Number(s));
+          await this.respuestasOpcionesService.crearRespuestasOpciones(
+            m,
+            ids,
             pregunta,
             respuesta
           );
@@ -78,11 +73,11 @@ export class RespuestasService {
         break;
 
       case 'opcion_multiple_seleccion_simple':
-      case 'opcion_multiple_seleccion_multiple':
-        if (preguntaDto.opcionesNro) {
+        if (preguntaDto.seleccionSimple) {
+          const id = Number(preguntaDto.seleccionSimple);
           await this.respuestasOpcionesService.crearRespuestasOpciones(
-            manager,
-            preguntaDto.opcionesNro,
+            m,
+            [id],
             pregunta,
             respuesta
           );
@@ -91,15 +86,15 @@ export class RespuestasService {
     }
   }
 
+  
   async test(test) {
     console.log(test)
   }
 
   async findAll() {
-    // return await this.respuestasRepository.find();
   }
 
   async findOne(id: number) {
-    // return await this.respuestasRepository.findOne({ where: { id } });
   }
 }
+

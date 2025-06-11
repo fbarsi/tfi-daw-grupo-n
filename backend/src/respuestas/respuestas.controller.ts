@@ -1,19 +1,31 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, BadRequestException, ParseIntPipe} from '@nestjs/common';
 import { RespuestasService } from './respuestas.service';
 import { CreateRespuestasDto } from './dto/create-respuestas.dto';
+import { EncuestasService } from '../encuestas/encuestas.service';
+import { Encuestas } from '../encuestas/entities/encuestas.entity';
 
 @Controller('respuestas')
 export class RespuestasController {
-  constructor(private readonly respuestasService: RespuestasService) {}
+  constructor(
+    private readonly respuestasService: RespuestasService,
+    private readonly encuestasService: EncuestasService,
+  ) {}
 
   @Post()
-  create(@Body() createRespuestasDto: CreateRespuestasDto) {
-    return this.respuestasService.create(createRespuestasDto);
-  }
+  async create(@Body() dto: CreateRespuestasDto) {
+    const encuestaId = dto.encuestaId;
+    const encuesta: Encuestas | null = await this.encuestasService.findOne(encuestaId);
+    if (!encuesta) {
+      throw new BadRequestException(`Encuesta con ID ${encuestaId} no encontrada`);
+    }
 
-  @Post('test')
-  test(@Body() test) {
-    return this.respuestasService.test(test);
+
+    if (encuesta.fechaVencimiento && new Date() > new Date(encuesta.fechaVencimiento)) {
+      throw new BadRequestException('La encuesta ya ha vencido');
+    }
+
+    
+    return this.respuestasService.create(dto);
   }
 
   @Get()
@@ -22,14 +34,7 @@ export class RespuestasController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.respuestasService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.respuestasService.findOne(id);
   }
-
-const encuesta = await this.encuestasRepo.findOne(id);
-if (encuesta.fechaVencimiento && new Date() > encuesta.fechaVencimiento) {
-  throw new BadRequestException('La encuesta ya ha vencido');
-}
-
-
 }

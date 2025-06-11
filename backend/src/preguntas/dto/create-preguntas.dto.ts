@@ -1,14 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  ValidateNested
-} from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested} from 'class-validator';
 import { CreateOpcionesDto } from 'src/opciones/dto/create-opciones.dto';
 
 export enum TiposRespuesta {
@@ -24,17 +15,13 @@ export class CreatePreguntasDto {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
   texto: string;
 
-  @IsNotEmpty()
-  @IsEnum(TiposRespuesta, {
-    message: `El tipo debe ser uno de: ${Object.values(TiposRespuesta).join(', ')}`,
-  })
+  @IsEnum(TiposRespuesta)
   tipo: TiposRespuesta;
 
-  @IsArray()
   @IsOptional()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateOpcionesDto)
   opciones?: CreateOpcionesDto[];

@@ -1,46 +1,35 @@
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested} from 'class-validator';
 
-export class PreguntasDto {
-  @IsInt()
-  @IsNotEmpty()
-  numero: number;
+export class PreguntaRespuestaDto {
+  @IsNumber()
+  preguntaId: number;
 
-  @IsArray()
-  @IsInt({ each: true })
   @IsOptional()
-  opcionesNro?: number[];
-
   @IsString()
+  textoLibre?: string;
+
   @IsOptional()
-  texto?: string;
+  @IsArray()
+  @IsString({ each: true })
+  seleccionMultiple?: string[];
+
+  @IsOptional()
+  @IsString()
+  seleccionSimple?: string;
 }
 
 export class CreateRespuestasDto {
   @IsNumber()
   encuestaId: number;
 
-  @IsOptional()
   @IsString()
-  seleccionSimple?: string;
+  @IsNotEmpty()
+  codigo_respuesta: string;      
 
-  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => String)
-  seleccionMultiple?: string[];
-
-  @IsOptional()
-  @IsString()
-  textoLibre?: string;
+  @Type(() => PreguntaRespuestaDto)
+  preguntas: PreguntaRespuestaDto[];  
 }
 
