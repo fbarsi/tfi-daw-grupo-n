@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-email',
@@ -7,5 +8,14 @@ import { Component } from '@angular/core';
   styleUrl: './email.component.css'
 })
 export class EmailComponent {
+   @Input() id: string = '';
 
+  email = new FormGroup({
+    to: new FormControl(''),
+    message: new FormControl('')
+  });
+
+  ngOnInit() {
+    this.email.get('message')?.setValue(`urlcompleta`);
+  }
 }

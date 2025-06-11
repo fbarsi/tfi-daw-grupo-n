@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Encuesta } from '../interfaces/encuesta';
 import { TiposRespuesta } from '../interfaces/enum';
@@ -13,8 +13,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './encuesta.component.html',
   styleUrl: './encuesta.component.css'
 })
-export class EncuestaComponent {
-
+export class EncuestaComponent implements OnInit{
+   urlActual = '';
 
   // Encuesta rellena con cosas del formulario html
   encuestaForm = new FormGroup({
@@ -32,7 +32,16 @@ export class EncuestaComponent {
         ])
       })
     ])
-  })
+  });
+
+  email = new FormGroup({
+    to: new FormControl('', [Validators.required, Validators.email]),
+    message: new FormControl('')
+  });
+
+  ngOnInit(): void {
+    this.urlActual = window.location.href;
+  }
 
   get preguntas(): FormArray {
     return this.encuestaForm.get('preguntas') as FormArray;
@@ -118,10 +127,28 @@ export class EncuestaComponent {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     this.http.post<Encuesta>(this.urlBase, encuestaCompleta, { headers }).subscribe({
-      next: (res) => console.log('✅ Encuesta enviada con éxito:', res),
+      next: (res) => {console.log('✅ Encuesta enviada con éxito:', res),
+                this.enviarEmail(res)
+      },
       error: (err) => {
         console.error('❌ Error al enviar encuesta:', err);
       }
     });
+  }
+
+  enviarEmail(res : any) {
+    const urlConCodigo = `${this.urlActual}respuesta/${res.codigo_respuesta}`;
+    this.email.get('message')?.setValue(urlConCodigo);
+
+    if (this.email.valid) {
+      const emailEnviar = this.email.value;
+      console.log(emailEnviar)
+      this.http.post<{to:string,message:string}>("/api/email/send", emailEnviar).subscribe({
+        next: (res) => {console.log('Email enviado')},
+        error: (err) => {
+          console.error(err);
+        }
+      })
+    }
   }
 }

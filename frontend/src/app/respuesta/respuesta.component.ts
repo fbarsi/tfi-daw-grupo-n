@@ -28,6 +28,8 @@ export class RespuestaComponent implements OnInit {
     preguntas: new FormArray([])
   })
 
+  
+
   ngOnInit(): void {
     this.ruta.params.subscribe(params => {
       this.id = params['id'];
@@ -42,11 +44,11 @@ export class RespuestaComponent implements OnInit {
     const preguntasArray = this.respuesta.get('preguntas') as FormArray;
 
     preguntas.forEach(p => {
-      let controls : any = {
+      let controls: any = {
         numero: new FormControl(p.numero),
       };
 
-      if (p.tipo === 'abierta'){
+      if (p.tipo === 'abierta') {
         controls.texto = new FormControl('', [Validators.required])
       } else {
         controls.opcionesNro = new FormArray([], [Validators.required])
@@ -110,10 +112,10 @@ export class RespuestaComponent implements OnInit {
     return {
       ...raw,
       //por cada pregunta
-      preguntas : raw.preguntas.map((pregunta : any) => {
-        const respuesta : any = {
-          numero : Number(pregunta.numero),
-          texto : pregunta.texto
+      preguntas: raw.preguntas.map((pregunta: any) => {
+        const respuesta: any = {
+          numero: Number(pregunta.numero),
+          texto: pregunta.texto
         };
 
         if (pregunta.opcionesNro && pregunta.opcionesNro.length >= 1) {
@@ -133,18 +135,23 @@ export class RespuestaComponent implements OnInit {
       return
     }
 
-    let respuestaAEnviar : string = JSON.stringify(this.obtenerRespuesta(this.respuesta.value));
+    let respuestaAEnviar: string = JSON.stringify(this.obtenerRespuesta(this.respuesta.value));
 
     console.log(respuestaAEnviar);
 
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    this.http.post<Respuestas>((this.urlBase), respuestaAEnviar, {headers}).subscribe({
-      next: (res) => console.log('✅ Respuesta enviada con éxito:', res),
+    this.http.post<Respuestas>((this.urlBase), respuestaAEnviar, { headers }).subscribe({
+      next: (res) => {
+        console.log('✅ Respuesta enviada con éxito:', res);
+      },
       error: (err) => {
-        console.error('❌ Error al enviar respuesta:', err);}
+        console.error('❌ Error al enviar respuesta:', err);
+        return
+      }
     })
   }
+
 
 
   //   {

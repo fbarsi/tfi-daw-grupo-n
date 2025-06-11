@@ -23,11 +23,11 @@
                 <input type="text" id="pregunta" formControlName="texto" class="form-control form-control-sm" />
                 <br />
                 <div class="mensaje-error"
-                            *ngIf="preguntas.at(i).get('texto')?.invalid && preguntas.at(i).get('texto')?.dirty || preguntas.at(i).get('texto')?.touched">
-                            <p *ngIf="preguntas.at(i).get('texto')?.hasError('required')">requerido
-                            </p>
-                            <p *ngIf="preguntas.at(i).get('texto')?.hasError('minlength')"> minimo 2 caracteres</p>
-                        </div>
+                    *ngIf="preguntas.at(i).get('texto')?.invalid && preguntas.at(i).get('texto')?.dirty || preguntas.at(i).get('texto')?.touched">
+                    <p *ngIf="preguntas.at(i).get('texto')?.hasError('required')">requerido
+                    </p>
+                    <p *ngIf="preguntas.at(i).get('texto')?.hasError('minlength')"> minimo 2 caracteres</p>
+                </div>
 
 
                 <label for="tipo" class="form-label">Seleccione tipo de pregunta</label>
@@ -75,8 +75,16 @@
             </div>
 
         </div>
+        <form [formGroup]="email">
+            <label>Ingrese su email:</label>
+            <input type="email" placeholder="Email" formControlName="to">
+        </form>
 
         <button (click)="crearPregunta()" class="btn btn-primary">Agregar pregunta</button>
         <button (click)="enviarEncuesta()" class="btn btn-primary">Enviar encuesta</button>
+
+
+
+
     </form>
 </div>
