@@ -18,14 +18,9 @@ export class EncuestasController {
     return this.encuestasService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.encuestasService.findOne(+id);
-  // }
-
   @Get(':codigo_respuesta')
-  findQuestions(@Param('codigo_respuesta') codigo_respuesta: string) {
-    return this.encuestasService.findQuestions(codigo_respuesta);
+  obtenerPreguntas(@Param('codigo_respuesta') codigo_respuesta: string) {
+    return this.encuestasService.obtenerPreguntas(codigo_respuesta);
     
   }
 
@@ -39,9 +34,9 @@ export class EncuestasController {
     @Param('codigo_resultados') codigo_resultados: string,
     @Response() res,
     ) {
-  const csv = await this.encuestasService.exportEstadisticasToCsv(codigo_resultados);
-  res.header('Content-Type', 'text/csv');
-  res.attachment(`estadisticas_${codigo_resultados}.csv`);
-  res.send(csv);
+    const csv = await this.encuestasService.exportarEstadisticasCsv(codigo_resultados);
+    res.header('Content-Type', 'text/csv');
+    res.attachment(`estadisticas_${codigo_resultados}.csv`);
+    res.send(csv);
   }
 }

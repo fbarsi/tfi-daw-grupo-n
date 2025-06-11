@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { Validators } from '@angular/forms';
 import { ApiService } from '../api/api.service';
 
 @Component({
@@ -33,8 +34,9 @@ export class CrearEncuestaComponent {
     private apiService: ApiService
   ) {
     this.encuesta = this.fb.group({
-      nombre: this.fb.control('Titulo encuesta'),
-      preguntas: this.fb.array([this.crearPregunta()])
+      nombre: this.fb.control('Titulo encuesta', Validators.required),
+      preguntas: this.fb.array([this.crearPregunta()]),
+      fechaVencimiento: this.fb.control< string | null >(null)
     });
   }
 
@@ -113,7 +115,7 @@ export class CrearEncuestaComponent {
         next: (res: any) => {
           console.log(res);
           this.qrResponder = `${this.baseUrl}/responder/${res.codigo_respuesta}`;
-          this.urlResultados = `${this.baseUrl}/resultados/${res.codigo_resultados}`;
+          this.urlResultados = `${this.baseUrl}/estadisticas/${res.codigo_resultados}`;
           
           this.mostrarQR = true;
         },

@@ -1,0 +1,66 @@
+<div class="container">
+  <h1>Estadísticas de la encuesta</h1>
+  
+  @if (cargando) {
+    <div class="loading">
+      <p>Cargando estadísticas...</p>
+    </div>
+  }
+
+  @if (!cargando && encuesta) {
+    <div>
+      <h2>{{ encuesta.nombre }}</h2>
+      
+      @for (pregunta of encuesta.preguntas; track pregunta.numero; let i = $index) {
+        <div class="question-container">
+          <div class="question-header">
+            <h3>Pregunta {{ pregunta.numero }}: {{ pregunta.texto }}</h3>
+            <p>Total de respuestas: {{ getTotalRespuestas(pregunta) }}</p>
+          </div>
+
+          @if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
+            <div class="chart-container horizontal-bar">
+              <canvas #chartCanvas></canvas>
+            </div>
+          }
+
+          @if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
+            <div class="chart-container pie-chart">
+              <canvas #chartCanvas></canvas>
+            </div>
+          }
+
+          @if (pregunta.tipo === 'abierta') {
+            <div class="open-answers">
+              <h4>Respuestas recibidas ({{ pregunta.respuestas_abiertas.length }}):</h4>
+              
+              @if (pregunta.respuestas_abiertas.length > 0) {
+                <div>
+                  <ul>
+                    @for (respuesta of pregunta.respuestas_abiertas; track respuesta.texto) {
+                      <li>{{ respuesta.texto }}</li>
+                    }
+                  </ul>
+                </div>
+              } @else {
+                <p class="no-answers">No se recibieron respuestas para esta pregunta.</p>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <div class="actions">
+        <button class="export-btn">
+          Exportar CSV
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (!cargando && !encuesta) {
+    <div class="no-data">
+      <p>No se encontraron estadísticas para el código proporcionado.</p>
+    </div>
+  }
+</div>

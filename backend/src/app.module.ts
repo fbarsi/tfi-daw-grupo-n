@@ -30,7 +30,7 @@ import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-op
         RespuestasAbiertas, 
         RespuestasOpciones
       ],
-      synchronize: false
+      synchronize: true
     }),
     EncuestasModule, 
     OpcionesModule, 

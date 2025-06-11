@@ -24,6 +24,7 @@
               X
             </button>
           </div>
+
           @if (mostrarOpciones(i)) {
             <div class="contenedorOpciones" formArrayName="opciones">
               @for (opcion of getOpcionesArray(i).controls; track opcion.value; let j = $index) {
@@ -45,6 +46,14 @@
       }
     </div>
     <div class="contenedor">
+      <div class="contenedor">
+        <label for="fechaVencimiento">Fecha de vencimiento</label>
+        <input
+          id="fechaVencimiento"
+          type="datetime-local"
+          formControlName="fechaVencimiento"
+        />
+      </div>
       <button type="button" (click)="agregarPregunta()">Nueva Pregunta</button>
       <button type="submit">Guardar</button>
     </div>
@@ -59,9 +68,9 @@
           [width]="200"
           [errorCorrectionLevel]="'M'"
         ></qrcode>
-        <a [href]="qrResponder">{{ qrResponder }}</a>
+        <a [href]="qrResponder" target="_blank">Responder encuesta</a>
         <br>
-        <a [href]="urlResultados">{{ urlResultados }}</a>
+        <a [href]="urlResultados" target="_blank">Ver resultados</a>
       </div>
     </div>
   }

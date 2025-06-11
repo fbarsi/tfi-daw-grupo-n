@@ -11,6 +11,7 @@ import {
 
 @Entity()
 export class Opciones {
+  [x: string]: any;
   @PrimaryGeneratedColumn()
   id: number;
 

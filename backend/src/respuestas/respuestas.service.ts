@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRespuestasDto, PreguntasDto } from './dto/create-respuestas.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Respuestas } from './entities/respuestas.entity';
@@ -28,7 +28,7 @@ export class RespuestasService {
         where: { codigo_respuesta: createRespuestasDto.codigo_respuesta },
       });
       if (!encuesta) {
-        throw new Error('La encuesta no existe');
+        throw new BadRequestException('Encuesta no encontrada')
       }
 
       // instanciar la respuesta

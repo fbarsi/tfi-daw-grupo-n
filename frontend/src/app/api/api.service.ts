@@ -22,5 +22,9 @@ export class ApiService {
   enviarRespuestas(respuestasData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/respuestas`, respuestasData);
   }
+
+  obtenerEstadisticas(codigo_resultados: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/encuestas/estadisticas/${codigo_resultados}`);
+  }
 }
 
