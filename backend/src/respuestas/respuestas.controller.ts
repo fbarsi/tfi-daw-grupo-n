@@ -25,4 +25,11 @@ export class RespuestasController {
   findOne(@Param('id') id: string) {
     return this.respuestasService.findOne(+id);
   }
+
+const encuesta = await this.encuestasRepo.findOne(id);
+if (encuesta.fechaVencimiento && new Date() > encuesta.fechaVencimiento) {
+  throw new BadRequestException('La encuesta ya ha vencido');
+}
+
+
 }

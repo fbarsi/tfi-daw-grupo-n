@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, ValidateNested,IsOptional,IsDateString } from 'class-validator';
 import { CreatePreguntasDto } from 'src/preguntas/dto/create-preguntas.dto';
 
 export class CreateEncuestasDto {
@@ -11,4 +11,8 @@ export class CreateEncuestasDto {
   @ValidateNested({ each: true })
   @Type(() => CreatePreguntasDto)
   preguntas: CreatePreguntasDto[];
+
+  @IsOptional()
+  @IsDateString({}, { message: 'fechaVencimiento debe ser una cadena ISO 8601' })
+  fechaVencimiento?: string;  // p.ej. "2025-06-30T23:59:59Z"
 }

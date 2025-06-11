@@ -24,6 +24,15 @@
               X
             </button>
           </div>
+
+           <div class="contenedor">
+      <label for="fechaVencimiento">Fecha de vencimiento</label>
+      <input
+        id="fechaVencimiento"
+        type="datetime-local"
+        formControlName="fechaVencimiento"
+      />
+    </div>
           @if (mostrarOpciones(i)) {
             <div class="contenedorOpciones" formArrayName="opciones">
               @for (opcion of getOpcionesArray(i).controls; track j; let j = $index) {

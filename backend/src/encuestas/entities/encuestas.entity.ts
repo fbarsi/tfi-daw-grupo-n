@@ -31,4 +31,7 @@ export class Encuestas {
 
   @OneToMany(() => Respuestas, (respuesta) => respuesta.encuesta)
   respuestas: Respuestas[];
+
+   @Column({ type: 'timestamp', nullable: true })
+  fechaVencimiento?: Date;
 }

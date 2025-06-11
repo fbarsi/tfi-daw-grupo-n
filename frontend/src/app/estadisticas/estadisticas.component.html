@@ -1,0 +1,16 @@
+<div *ngIf="cargando" class="loading">
+  Cargando estadísticas…
+</div>
+
+<div *ngIf="!cargando">
+  <h2>Estadísticas de la encuesta</h2>
+
+  <div *ngFor="let p of preguntas; let i = index" class="grafico-pregunta">
+    <h4>{{ p.texto }}</h4>
+    <canvas #chartCanvas id="chart-{{i}}"></canvas>
+  </div>
+
+  <button class="btn-export" (click)="exportarImagenes()">
+    Exportar como PNG
+  </button>
+</div>

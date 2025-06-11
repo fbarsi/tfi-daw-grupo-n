@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-crear-encuesta',
@@ -31,8 +32,9 @@ export class CrearEncuestaComponent {
     private fb: FormBuilder
   ) {
     this.encuesta = this.fb.group({
-      nombre: this.fb.control('Titulo encuesta'),
-      preguntas: this.fb.array([this.crearPregunta()])
+      nombre: this.fb.control('Titulo encuesta', Validators.required),
+      preguntas: this.fb.array([this.crearPregunta()]),
+      fechaVencimiento: this.fb.control< string | null >(null)
     });
   }
 

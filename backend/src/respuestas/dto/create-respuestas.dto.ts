@@ -3,6 +3,7 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -25,13 +26,21 @@ export class PreguntasDto {
 }
 
 export class CreateRespuestasDto {
-  @IsUUID()
-  @IsNotEmpty()
-  codigo_respuesta: string;
+  @IsNumber()
+  encuestaId: number;
 
+  @IsOptional()
+  @IsString()
+  seleccionSimple?: string;
+
+  @IsOptional()
   @IsArray()
-  @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => PreguntasDto)
-  preguntas: PreguntasDto[];
+  @Type(() => String)
+  seleccionMultiple?: string[];
+
+  @IsOptional()
+  @IsString()
+  textoLibre?: string;
 }
+
