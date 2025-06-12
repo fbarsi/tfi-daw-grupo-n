@@ -7,12 +7,19 @@ import * as Handlebars from 'handlebars';
 import * as QRCode from 'qrcode';
 import { Transporter } from 'nodemailer';
 import { response } from 'express';
+import { EncuestasService } from 'src/encuestas/encuestas.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Encuestas } from 'src/encuestas/entities/encuestas.entity';
+import { Repository } from 'typeorm';
+import { error } from 'console';
 
 @Injectable()
 export class EmailService {
   private transporter: Transporter; //clase de nodemailer
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService,
+    private readonly encuestaService : EncuestasService
+  ) {
 
     // configuración del transporter con variables de entorno (email y clave de aplicacion)
     this.transporter = nodemailer.createTransport({
@@ -40,10 +47,18 @@ export class EmailService {
     const qrCid = 'qrimage';
     const qrBuffer = Buffer.from(qrBase64.split(',')[1], 'base64');
 
+    const codigo = body.message.substring(body.message.lastIndexOf('/') + 1);
+    const encuesta = await this.encuestaService.buscarEncuestaPorCodRes(codigo);
+
+    if(!encuesta){
+      throw new Error('Encuesta no encontrada');
+    }
+
     // busca la template hbs del correo
     const html = this.obtenerTemplate('mensaje', {
       mensaje: body.message,
       qr: `cid:${qrCid}`,
+      encuesta: encuesta
     });
 
     await this.transporter.sendMail({

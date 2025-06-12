@@ -178,7 +178,8 @@ select {
 
 .boton:hover,
 .btn-agregar-pregunta:hover {
-  text-decoration: underline;
+  background-color: white;
+  color: #221947;
 }
 
 /* === Botón degradado (si querés reemplazar el outline) === */
@@ -215,6 +216,17 @@ select {
   background-color: #221947;
   border: none;
   transition: 0.2s;
+}
+
+.contenedor-email{
+
+  background-color: #1e2235;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 /* === Responsividad === */

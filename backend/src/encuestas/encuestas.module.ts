@@ -18,5 +18,6 @@ import { RespuestasVerdaderoFalso } from 'src/respuestas-verdadero-falso/entitie
   ],
   controllers: [EncuestasController],
   providers: [EncuestasService, PreguntasService, OpcionesService],
+  exports:[EncuestasService]
 })
 export class EncuestasModule {}

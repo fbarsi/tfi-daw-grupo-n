@@ -185,4 +185,12 @@ export class EncuestasService {
     const parser = new Parser({ fields: camposCsv });
     return parser.parse(datosParaCsv);
   }
+
+
+  //para el email
+  async buscarEncuestaPorCodRes(codigo){
+ const encuesta = await this.encuestasRepository.findOne({ where: { codigo_respuesta: codigo } });
+ return encuesta?.nombre
+  }
+  
 }

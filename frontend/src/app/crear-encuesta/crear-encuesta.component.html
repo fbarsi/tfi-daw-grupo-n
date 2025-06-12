@@ -87,28 +87,32 @@
       </div>
       }
     </div>
-    <div class="contenedor">
-      <div class="contenedor">
+
+    <button type="button" (click)="agregarPregunta()" class="btn btn-outline-light boton mx-2 my-2">Nueva
+        pregunta</button>
+
+    <div class="contenedor d-flex flex-column  align-items-center my-4">
+       <div class="contenedor">
         <label for="fechaVencimiento">Fecha de vencimiento</label>
         <input id="fechaVencimiento" type="date" formControlName="fechaVencimiento" />
       </div>
 
-      <div class="contenedor-email d-flex flex-column justify-content-center align-items-center mt-5">
-        <p>¿Desea recibir el enlace de participación por Email?</p>
+
+      <div class="contenedor-email d-flex flex-column  align-items-center my-4">
         <form [formGroup]="email">
-          <label>Ingrese su email:</label>
-          <input type="email" placeholder="Email" formControlName="to">
+          <label>Ingrese su email para recibir el enlace de participación por correo:</label>
+            <input type="email" placeholder="Email" formControlName="to">
+      
+
           <div class="mensaje-error"
             *ngIf="email.get('to')?.invalid && (email.get('to')?.dirty || email.get('to')?.touched)">
             <p *ngIf="email.get('to')?.hasError('email')"> Ingresa un email válido</p>
           </div>
         </form>
       </div>
-
-      <button type="button" (click)="agregarPregunta()" class="btn btn-outline-light boton mx-2 my-5">Nueva
-        Pregunta</button>
-      <button type="submit" class="btn btn-outline-light boton">Guardar</button>
+    
     </div>
+    <button type="submit" class="btn btn-primary  mx-2 my-2 py-2 px-5" [disabled]="encuesta.invalid">Guardar encuesta</button>
   </form>
 
   @if (mostrarQR) {

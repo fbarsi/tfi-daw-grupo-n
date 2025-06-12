@@ -135,9 +135,6 @@ export class CrearEncuestaComponent {
     }
   }
 
-
-
-
   enviarEmail(res: any) {
     const urlConCodigo = `${window.location.origin}/responder/${res.codigo_respuesta}`;
     this.email.get('message')?.setValue(urlConCodigo);
@@ -158,5 +155,7 @@ export class CrearEncuestaComponent {
       })
     }
   }
+
+  
 
 }
