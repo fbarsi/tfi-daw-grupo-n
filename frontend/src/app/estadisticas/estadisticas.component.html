@@ -1,15 +1,16 @@
-<div class="container">
-  <h1>Estadísticas de la encuesta</h1>
-  
-  @if (cargando) {
-    <div class="loading">
-      <p>Cargando estadísticas...</p>
-    </div>
-  }
-
-  @if (!cargando && encuesta) {
+<div class="container-estadisticas">
+  <div class="container">
+    
+    @if (cargando) {
+      <div class="loading">
+        <p>Cargando estadísticas...</p>
+      </div>
+    }
+    
+    @if (!cargando && encuesta) {
     <div>
-      <h2>{{ encuesta.nombre }}</h2>
+      <h1 class="titulo">{{ encuesta.nombre }}</h1>
+      <h3 class="titulo">Estadísticas</h3>
       
       @for (pregunta of encuesta.preguntas; track pregunta.numero; let i = $index) {
         <div class="question-container">
@@ -63,4 +64,5 @@
       <p>No se encontraron estadísticas para el código proporcionado.</p>
     </div>
   }
+  </div>
 </div>

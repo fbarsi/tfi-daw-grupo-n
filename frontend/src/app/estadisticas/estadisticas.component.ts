@@ -40,7 +40,7 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.encuesta = data;
         this.cargando = false;
-        setTimeout(() => this.crearGraficos(), 10);
+        setTimeout(() => this.crearGraficos(), 50);
       },
       error: (err) => {
         console.error('Error al cargar la encuesta', err);

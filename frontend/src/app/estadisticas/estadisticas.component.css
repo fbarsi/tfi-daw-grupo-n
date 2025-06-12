@@ -3,6 +3,23 @@
   margin: 0 auto;
   padding: 20px;
 }
+.container-estadisticas {
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #141727;
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.titulo{
+  color: #fff;
+}
 
 .loading {
   text-align: center;

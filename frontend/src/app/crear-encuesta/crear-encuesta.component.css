@@ -1,0 +1,294 @@
+/* === Fondo general === */
+.encuesta-container {
+  min-height: 100vh;
+  background-color: #141727;
+  padding: 2rem;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.mensaje-error{
+    color: rgb(208, 110, 110);
+}
+
+/* === Formulario === */
+form {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-pregunta{
+    min-width: 60%;
+    
+}
+
+/* === Título encuesta === */
+/* .titulo {
+  font-size: 1.25rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #666;
+  color: white;
+  width: 80%;
+  margin-bottom: 2rem;
+  padding: 0.5rem 0;
+} */
+
+/* === Sección de preguntas === */
+.seccion-preguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.seccion-pregunta {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* === Caja de pregunta === */
+.contenedorPreguntas {
+  flex: 1;
+  background-color: #1e2235;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* === Encabezado de pregunta: input + select + botón eliminar === */
+.contenedor-2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+}
+
+.contenedor-preguntas-tipo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* === Opciones === */
+.contenedor-opciones {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  
+}
+
+.contenedor-opcion {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.contenedorOpciones{
+    width: 80%;
+}
+
+.opcionLabel {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+/* === Inputs generales === */
+input[type="text"],
+select {
+  flex: 1;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #555;
+  color: #fff;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+}
+
+input[type="date"] {
+  background-color: #1e2235;
+  border: none;
+  border-bottom: 1px solid #555;
+  color: #fff;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 250px;
+}
+
+/* === Select === */
+select {
+  background-color: #1e2235;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+/* === Botones === */
+.btn-eliminar {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn-crear {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn-crear:hover {
+  color: #ffffff;
+}
+
+.btn-eliminar:hover {
+  color: #ff4c4c;
+}
+
+.boton,
+.btn-agregar-pregunta {
+  background: none;
+  color: white;
+  font-weight: 500;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.boton:hover,
+.btn-agregar-pregunta:hover {
+  text-decoration: underline;
+}
+
+/* === Botón degradado (si querés reemplazar el outline) === */
+.btn-gradient {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+}
+
+.card{
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.card{
+  background-color: #1e2235;
+  color: #fff;
+}
+.btn-primary{
+  background-color: #312563;
+  border: none;
+}
+.btn-primary:hover{
+  background-color: #221947;
+  border: none;
+  transition: 0.2s;
+}
+
+/* === Responsividad === */
+@media (max-width: 992px) {
+  form {
+    width: 100%;
+  }
+
+  .seccion-pregunta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .contenedor-titulo{
+align-items: stretch;
+  }
+
+  /* .contenedor-2, */
+  .contenedor-opciones,
+  .contenedorOpciones{
+    flex-direction: column !important;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .contenedor-2{
+    display: grid;
+    grid-template-columns: 10fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .contenedor-2 > :nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.contenedor-2 > :nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.contenedor-2 > :nth-child(2) {
+  grid-column: 1 / span 2; 
+  grid-row: 2;
+  justify-self: center;
+}
+
+  .contenedorOpciones {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .contenedorPreguntas {
+    padding: 2rem;
+  }
+
+  .boton,
+  .btn-agregar-pregunta,
+  .btn-gradient,
+  .btn-eliminar {
+    align-self: center;
+    width: fit-content;
+    margin: 0.5rem ;
+  }
+
+  input[type="text"],
+  select,
+  input[type="date"] {
+    width: 100%;
+    margin: 0.3rem 0;
+  }
+
+  .opcionLabel {
+    margin-bottom: 0.25rem;
+  }
+}
+
