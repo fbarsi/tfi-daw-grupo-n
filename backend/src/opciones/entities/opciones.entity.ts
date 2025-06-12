@@ -11,7 +11,6 @@ import {
 
 @Entity()
 export class Opciones {
-  [x: string]: any;
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,4 +26,6 @@ export class Opciones {
 
   @OneToMany(() => RespuestasOpciones, (respuesta_opcion) => respuesta_opcion.opcion)
   respuestas_opciones: RespuestasOpciones[];
+
+  totalRespuestas: any;
 }

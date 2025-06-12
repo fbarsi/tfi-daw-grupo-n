@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -17,11 +18,15 @@ export class PreguntasDto {
   @IsArray()
   @IsInt({ each: true })
   @IsOptional()
-  opcionesNro?: number[];
+  numerosOpciones?: number[];
 
   @IsString()
   @IsOptional()
   texto?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  opcion?: boolean;
 }
 
 export class CreateRespuestasDto {

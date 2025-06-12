@@ -12,6 +12,8 @@ import { Encuestas } from './encuestas/entities/encuestas.entity';
 import { Opciones } from './opciones/entities/opciones.entity';
 import { RespuestasAbiertas } from './respuestas-abiertas/entities/respuestas-abiertas.entity';
 import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-opciones.entity';
+import { RespuestasVerdaderoFalso } from './respuestas-verdadero-falso/entities/respuestas-verdadero-falso.entity';
+import { RespuestasVerdaderoFalsoModule } from './respuestas-verdadero-falso/respuestas-verdadero-falso.module';
 
 @Module({
   imports: [
@@ -28,7 +30,8 @@ import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-op
         Respuestas, 
         Opciones, 
         RespuestasAbiertas, 
-        RespuestasOpciones
+        RespuestasOpciones,
+        RespuestasVerdaderoFalso
       ],
       synchronize: true
     }),
@@ -37,6 +40,7 @@ import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-op
     PreguntasModule, 
     RespuestasModule, 
     RespuestasAbiertasModule,
-    RespuestasOpcionesModule], 
+    RespuestasOpcionesModule,
+    RespuestasVerdaderoFalsoModule], 
 })
 export class AppModule {}

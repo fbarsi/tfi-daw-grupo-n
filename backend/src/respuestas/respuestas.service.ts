@@ -1,21 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRespuestasDto, PreguntasDto } from './dto/create-respuestas.dto';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { Respuestas } from './entities/respuestas.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { Encuestas } from 'src/encuestas/entities/encuestas.entity';
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
-import { RespuestasAbiertas } from 'src/respuestas-abiertas/entities/respuestas-abiertas.entity';
-import { RespuestasOpciones } from 'src/respuestas-opciones/entities/respuestas-opciones.entity';
-import { Opciones } from 'src/opciones/entities/opciones.entity';
 import { RespuestasAbiertasService } from 'src/respuestas-abiertas/respuestas-abiertas.service';
 import { RespuestasOpcionesService } from 'src/respuestas-opciones/respuestas-opciones.service';
+import { RespuestasVerdaderoFalsoService } from 'src/respuestas-verdadero-falso/respuestas-verdadero-falso.service';
 
 @Injectable()
 export class RespuestasService {
   constructor(
     private readonly respuestasAbiertasService: RespuestasAbiertasService,
     private readonly respuestasOpcionesService: RespuestasOpcionesService,
+    private readonly respuestasVerdaderoFalsoService: RespuestasVerdaderoFalsoService,
 
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
@@ -77,12 +76,23 @@ export class RespuestasService {
         }
         break;
 
+      case 'verdadero_falso':
+        if (preguntaDto.opcion) {
+          await this.respuestasVerdaderoFalsoService.crearRespuestaVerdaderoFalso(
+            manager,
+            preguntaDto.opcion,
+            pregunta,
+            respuesta
+          );
+        }
+        break;
+
       case 'opcion_multiple_seleccion_simple':
       case 'opcion_multiple_seleccion_multiple':
-        if (preguntaDto.opcionesNro) {
+        if (preguntaDto.numerosOpciones) {
           await this.respuestasOpcionesService.crearRespuestasOpciones(
             manager,
-            preguntaDto.opcionesNro,
+            preguntaDto.numerosOpciones,
             pregunta,
             respuesta
           );

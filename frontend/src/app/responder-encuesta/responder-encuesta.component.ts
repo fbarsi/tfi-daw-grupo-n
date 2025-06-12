@@ -78,14 +78,14 @@ export class ResponderEncuestaComponent implements OnInit {
           } else if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
             return {
               numero: pregunta.numero,
-              opcionesNro: pregunta.opciones
+              numerosOpciones: pregunta.opciones
                 .filter((_, index) => formValue[`pregunta_${pregunta.numero}`][index])
                 .map(opcion => opcion.numero)
             };
           } else {
             return {
               numero: pregunta.numero,
-              opcionesNro: [formValue[`pregunta_${pregunta.numero}`]]
+              numerosOpciones: [formValue[`pregunta_${pregunta.numero}`]]
             };
           }
         })

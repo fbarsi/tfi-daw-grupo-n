@@ -13,6 +13,7 @@ import { PreguntasService } from 'src/preguntas/preguntas.service';
 import { Respuestas } from 'src/respuestas/entities/respuestas.entity';
 import { resolve } from 'path';
 import { Parser } from '@json2csv/plainjs';
+import { RespuestasVerdaderoFalso } from 'src/respuestas-verdadero-falso/entities/respuestas-verdadero-falso.entity';
 
 @Injectable()
 export class EncuestasService {
@@ -27,6 +28,9 @@ export class EncuestasService {
 
     @InjectRepository(Respuestas)
     private readonly respuestasRepository: Repository<Respuestas>,
+
+    @InjectRepository(RespuestasVerdaderoFalso)
+    private readonly respuestasVerdaderoFalsoRepository: Repository<RespuestasVerdaderoFalso>,
 
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
@@ -109,6 +113,7 @@ export class EncuestasService {
       .createQueryBuilder('encuesta')
       .leftJoinAndSelect('encuesta.preguntas', 'pregunta')
       .leftJoinAndSelect('pregunta.respuestas_abiertas', 'respuestas_abiertas')
+      .leftJoinAndSelect('pregunta.respuestas_verdadero_falso', 'respuestas_verdadero_falso')
       .leftJoinAndSelect('pregunta.opciones', 'opcion')
       .loadRelationCountAndMap(
         'opcion.totalRespuestas',
@@ -125,9 +130,31 @@ export class EncuestasService {
         'pregunta.tipo',
         'opcion.numero',
         'opcion.texto',
-        'respuestas_abiertas.texto',
+        'respuestas_abiertas.texto'
       ])
       .getOne();
+
+    if (encuesta && encuesta.preguntas) {
+      for (const pregunta of encuesta.preguntas) {
+        if (pregunta.tipo === 'verdadero_falso') { 
+          const conteoVerdaderoFalso = await this.respuestasVerdaderoFalsoRepository
+            .createQueryBuilder('rvf')
+            .select([
+              'rvf.opcion',
+              'COUNT(rvf.opcion) as total'
+            ])
+            .where('rvf.id_pregunta = :idPregunta', { idPregunta: pregunta.id })
+            .groupBy('rvf.opcion')
+            .getRawMany();
+          console.log(conteoVerdaderoFalso)
+          pregunta.respuestasVFAgrupadas = {
+            verdadero: conteoVerdaderoFalso.find(item => item.rvf_opcion === true)?.total || 0,
+            falso: conteoVerdaderoFalso.find(item => item.rvf_opcion === false)?.total || 0
+          };
+        }
+      }
+    }
+
 
     if (!encuesta) {
       throw new BadRequestException('Encuesta no encontrada');

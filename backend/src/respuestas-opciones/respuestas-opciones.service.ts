@@ -16,11 +16,11 @@ export class RespuestasOpcionesService {
 
   async crearRespuestasOpciones(
       manager: EntityManager,
-      opcionesNro: number[],
+      numerosOpciones: number[],
       pregunta: Preguntas,
       respuesta: Respuestas
     ) {
-      for (const numeroOpcion of opcionesNro) {
+      for (const numeroOpcion of numerosOpciones) {
         const opcion = await manager.findOne(Opciones, {
           where: { numero: numeroOpcion, pregunta: { id: pregunta.id } },
         });
