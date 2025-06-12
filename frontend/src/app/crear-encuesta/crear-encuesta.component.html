@@ -1,77 +1,123 @@
-<div>
+<div class="encuesta-container">
   <form [formGroup]="encuesta" (ngSubmit)="onSubmit()">
-    <div class="contenedor">
-      <h2>Titulo de la encuesta</h2>
-      <input class="titulo" type="text" formControlName="nombre">
+    <div class="contenedor-titulo w-75">
+      <h2>Creá tu encuesta</h2>
+
+      <!--INPUT ENCUESTA-->
+      <input type="text" formControlName="nombre" placeholder="Ingresá el nombre de tu encuesta">
+
+      <div class="mensaje-error"
+        *ngIf="encuesta.get('nombre')?.invalid && (encuesta.get('nombre')?.dirty || encuesta.get('nombre')?.touched)">
+        <p *ngIf="encuesta.get('nombre')?.hasError('required')"> Nombre de encuesta es requerido</p>
+        <p *ngIf="encuesta.get('nombre')?.hasError('minlength')"> Nombre de encuesta debe tener minimo 2
+          caracteres</p>
+      </div>
+
     </div>
-    <div formArrayName="preguntas">
+    <div formArrayName="preguntas" class="seccion-preguntas mw-100 my-4">
       @for (pregunta of preguntasArray.controls; track pregunta.value; let i = $index) {
-        <div
-          [formGroupName]="i"
-          class="contenedor contenedorPreguntas"
-        >
-          <h3>Pregunta {{ i + 1 }}</h3>
-          <div class="contenedor-2">
-            <input type="text" formControlName="texto" />
-            <select name="" id="" formControlName="tipo">
-              @for (tipo of listaTipos; track tipo.value) {
+      <div class="seccion-pregunta">
+        <h3>{{ i + 1 }}.</h3>
+        <div [formGroupName]="i" class="contenedor contenedorPreguntas">
+          <div class="contenedor-preguntas-tipo">
+            <!--Tiene tipo y eliminar -->
+            <div class="contenedor-2">
+
+              <!--INPUT PREGUNTA-->
+              <div class="input-pregunta">
+                <input type="text" formControlName="texto" placeholder="Ingresa la pregunta" />
+                <div class="mensaje-error"
+                  *ngIf="preguntasArray.at(i).get('texto')?.invalid && preguntasArray.at(i).get('texto')?.dirty || preguntasArray.at(i).get('texto')?.touched">
+                  <p *ngIf="preguntasArray.at(i).get('texto')?.hasError('required')">Ingresa una pregunta.
+                  </p>
+                  <p *ngIf="preguntasArray.at(i).get('texto')?.hasError('minlength')">La pregunta debe tener como mínimo
+                    2 caracteres.</p>
+                </div>
+              </div>
+
+              <select name="" id="" formControlName="tipo">
+                @for (tipo of listaTipos; track tipo.value) {
                 <option [value]="tipo.value">
                   {{ tipo.label }}
                 </option>
-              }
-            </select>
-            <button type="button" (click)="eliminarPregunta(i)">
-              X
-            </button>
+                }
+              </select>
+
+              <button type="button" (click)="eliminarPregunta(i)" class="btn-eliminar">
+                <i class="bi bi-trash"></i>
+              </button>
+
+            </div>
           </div>
 
-          @if (mostrarOpciones(i)) {
+          <div class="contenedor-opciones">
+            @if (mostrarOpciones(i)) {
             <div class="contenedorOpciones" formArrayName="opciones">
               @for (opcion of getOpcionesArray(i).controls; track opcion.value; let j = $index) {
-                <div [formGroupName]="j">
-                  <label class="opcionLabel">Opcion {{ j + 1 }}</label>
-                  <input type="text" formControlName="texto" />
+              <div [formGroupName]="j">
+                <div class="contenedor-opcion my-4">
+                  <label class="opcionLabel">{{ j + 1 }}</label>
+
+                  <!--INPUT DE OPCION-->
+                  <div class="input-pregunta">
+                  <input type="text" formControlName="texto" placeholder="Ingresa la opción" />
+                  <div class="mensaje-error"
+                    *ngIf="opcion.get('texto')?.invalid && opcion.get('texto')?.dirty || opcion.get('texto')?.touched">
+                    <p *ngIf="opcion.get('texto')?.hasError('required')">Ingresa la opción.
+                    </p>
+                    <p *ngIf="opcion.get('texto')?.hasError('minlength')"> La opción debe tener mínimo 2 caracteres.</p>
+                  </div>
+                  </div>
+
                   <input type="hidden" formArrayName="numero" />
-                  <button type="button" (click)="eliminarOpcion(i, j)">
-                    X
+                  <button type="button" (click)="eliminarOpcion(i, j)" class="btn-eliminar">
+                    <i class="bi bi-trash"></i>
                   </button>
                 </div>
+              </div>
               }
             </div>
-            <button class="boton" type="button" (click)="agregarOpcion(i)">
-              Nueva Opcion
+            <button class="boton" type="button" (click)="agregarOpcion(i)" class="btn-crear mx-2 my-2">
+              <i class="bi bi-plus"></i>
             </button>
-          }
+            }
+          </div>
         </div>
+      </div>
       }
     </div>
     <div class="contenedor">
       <div class="contenedor">
         <label for="fechaVencimiento">Fecha de vencimiento</label>
-        <input
-          id="fechaVencimiento"
-          type="date"
-          formControlName="fechaVencimiento"
-        />
+        <input id="fechaVencimiento" type="date" formControlName="fechaVencimiento" />
       </div>
-      <button type="button" (click)="agregarPregunta()">Nueva Pregunta</button>
-      <button type="submit">Guardar</button>
+
+      <div class="contenedor-email">
+        <p>¿Desea recibir el enlace de participación por Email?</p>
+      <form [formGroup]="email">
+            <label>Ingrese su email:</label>
+            <input type="email" placeholder="Email" formControlName="to">
+        </form>
+        </div>
+
+      <button type="button" (click)="agregarPregunta()" class="btn btn-outline-light boton mx-2 my-5">Nueva
+        Pregunta</button>
+      <button type="submit"  class="btn btn-outline-light boton">Guardar</button>
     </div>
   </form>
 
   @if (mostrarQR) {
-    <div>
-      <h3>Enlaces</h3>
-      <div>
-        <qrcode
-          [qrdata]="qrResponder"
-          [width]="200"
-          [errorCorrectionLevel]="'M'"
-        ></qrcode>
-        <a [href]="qrResponder" target="_blank">Responder encuesta</a>
-        <br>
-        <a [href]="urlResultados" target="_blank">Ver resultados</a>
+  <div class="card" style="width: 18rem;">
+    <div class="card-img-top d-flex justify-content-center align-items-center my-3">
+      <qrcode [qrdata]="qrResponder" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+    <div class="card-body" >
+      <h3 class="card-title">Enlaces</h3>
+      <div  class="d-flex flex-column">
+        <a [href]="qrResponder" target="_blank" class="btn btn-primary my-2">Responder encuesta</a>
+        <a [href]="urlResultados" target="_blank" class="btn btn-primary">Ver resultados</a>
       </div>
     </div>
+  </div>
   }
 </div>
