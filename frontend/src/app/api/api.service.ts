@@ -26,5 +26,9 @@ export class ApiService {
   obtenerEstadisticas(codigo_resultados: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/encuestas/estadisticas/${codigo_resultados}`);
   }
+
+  obtenerCSV(codigo_resultados: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/encuestas/estadisticas/csv/${codigo_resultados}`, {responseType: 'blob'});
+  }
 }
 

@@ -28,15 +28,15 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
   @ViewChildren('chartCanvas')
   canvases!: QueryList<ElementRef<HTMLCanvasElement>>;
 
-  codigoResultado: string = '';
+  codigoResultados: string = '';
   encuesta!: Encuesta;
   cargando = true;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.codigoResultado = this.route.snapshot.params['codigo'];
-    this.apiService.obtenerEstadisticas(this.codigoResultado).subscribe({
+    this.codigoResultados = this.route.snapshot.params['codigo'];
+    this.apiService.obtenerEstadisticas(this.codigoResultados).subscribe({
       next: (data) => {
         this.encuesta = data;
         this.cargando = false;
@@ -202,15 +202,27 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     canvas.chart = newChart
   }
 
-  exportarImagenes(): void {
-    this.canvases.forEach((c, i) => {
-      const url = c.nativeElement.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `pregunta-${i + 1}.png`;
-      a.click();
-    });
+  exportarCSV() {
+    this.apiService.obtenerCSV(this.codigoResultados).subscribe({
+      next: (blob) => {
+        this.manejarDescarga(blob)
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
   }
+
+  manejarDescarga(blob: Blob): void {
+    this.apiService.obtenerCSV(this.codigoResultados).subscribe()
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `estadisticas_${this.codigoResultados}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+  
 
   getTotalRespuestas(pregunta: Pregunta): number {
     if (pregunta.tipo === 'abierta') {
