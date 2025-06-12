@@ -15,7 +15,7 @@ import { ApiService } from '../api/api.service';
 })
 
 
-export class CrearEncuestaComponent implements OnInit {
+export class CrearEncuestaComponent {
   encuesta: FormGroup;
   mostrarQR = false;
   qrResponder = '';
@@ -28,14 +28,11 @@ export class CrearEncuestaComponent implements OnInit {
   ];
 
   //configuraciones del correo
-  urlActual = '';
   email = new FormGroup({
     to: new FormControl('', [Validators.required, Validators.email]),
     message: new FormControl('')
   });
-  ngOnInit(): void {
-    this.urlActual = window.location.href;
-  }
+  
   //
   constructor(
     private route: ActivatedRoute,
@@ -142,14 +139,19 @@ export class CrearEncuestaComponent implements OnInit {
 
 
   enviarEmail(res: any) {
-    const urlConCodigo = `${this.urlActual}respuesta/${res.codigo_respuesta}`;
+    const urlConCodigo = `${window.location.origin}/responder/${res.codigo_respuesta}`;
     this.email.get('message')?.setValue(urlConCodigo);
 
     if (this.email.valid) {
-      const emailEnviar = this.email.value;
-      console.log(emailEnviar)
-      this.http.post<{ to: string, message: string }>("/api/email/send", emailEnviar).subscribe({
-        next: (res) => { console.log('Email enviado') },
+      const emailEnviarForm = this.email.value;
+
+      const emailEnviar = {
+        to: emailEnviarForm.to ?? '',
+        message: emailEnviarForm.message ?? ''
+      };
+
+      this.apiService.enviarMail(emailEnviar).subscribe({
+        next: () => { console.log('Email enviado') },
         error: (err) => {
           console.error(err);
         }

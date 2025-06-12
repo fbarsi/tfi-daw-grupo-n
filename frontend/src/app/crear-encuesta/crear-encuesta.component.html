@@ -60,13 +60,14 @@
 
                   <!--INPUT DE OPCION-->
                   <div class="input-pregunta">
-                  <input type="text" formControlName="texto" placeholder="Ingresa la opción" />
-                  <div class="mensaje-error"
-                    *ngIf="opcion.get('texto')?.invalid && opcion.get('texto')?.dirty || opcion.get('texto')?.touched">
-                    <p *ngIf="opcion.get('texto')?.hasError('required')">Ingresa la opción.
-                    </p>
-                    <p *ngIf="opcion.get('texto')?.hasError('minlength')"> La opción debe tener mínimo 2 caracteres.</p>
-                  </div>
+                    <input type="text" formControlName="texto" placeholder="Ingresa la opción" />
+                    <div class="mensaje-error"
+                      *ngIf="opcion.get('texto')?.invalid && opcion.get('texto')?.dirty || opcion.get('texto')?.touched">
+                      <p *ngIf="opcion.get('texto')?.hasError('required')">Ingresa la opción.
+                      </p>
+                      <p *ngIf="opcion.get('texto')?.hasError('minlength')"> La opción debe tener mínimo 2 caracteres.
+                      </p>
+                    </div>
                   </div>
 
                   <input type="hidden" formArrayName="numero" />
@@ -92,17 +93,21 @@
         <input id="fechaVencimiento" type="date" formControlName="fechaVencimiento" />
       </div>
 
-      <div class="contenedor-email">
+      <div class="contenedor-email d-flex flex-column justify-content-center align-items-center mt-5">
         <p>¿Desea recibir el enlace de participación por Email?</p>
-      <form [formGroup]="email">
-            <label>Ingrese su email:</label>
-            <input type="email" placeholder="Email" formControlName="to">
+        <form [formGroup]="email">
+          <label>Ingrese su email:</label>
+          <input type="email" placeholder="Email" formControlName="to">
+          <div class="mensaje-error"
+            *ngIf="email.get('to')?.invalid && (email.get('to')?.dirty || email.get('to')?.touched)">
+            <p *ngIf="email.get('to')?.hasError('email')"> Ingresa un email válido</p>
+          </div>
         </form>
-        </div>
+      </div>
 
       <button type="button" (click)="agregarPregunta()" class="btn btn-outline-light boton mx-2 my-5">Nueva
         Pregunta</button>
-      <button type="submit"  class="btn btn-outline-light boton">Guardar</button>
+      <button type="submit" class="btn btn-outline-light boton">Guardar</button>
     </div>
   </form>
 
@@ -111,9 +116,9 @@
     <div class="card-img-top d-flex justify-content-center align-items-center my-3">
       <qrcode [qrdata]="qrResponder" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
     </div>
-    <div class="card-body" >
+    <div class="card-body">
       <h3 class="card-title">Enlaces</h3>
-      <div  class="d-flex flex-column">
+      <div class="d-flex flex-column">
         <a [href]="qrResponder" target="_blank" class="btn btn-primary my-2">Responder encuesta</a>
         <a [href]="urlResultados" target="_blank" class="btn btn-primary">Ver resultados</a>
       </div>

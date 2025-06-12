@@ -111,6 +111,7 @@ form {
 
 /* === Inputs generales === */
 input[type="text"],
+input[type="email"],
 select {
   flex: 1;
   background-color: transparent;

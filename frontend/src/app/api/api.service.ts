@@ -30,5 +30,9 @@ export class ApiService {
   obtenerCSV(codigo_resultados: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/encuestas/estadisticas/csv/${codigo_resultados}`, {responseType: 'blob'});
   }
+
+  enviarMail(email :{ to: string, message: string }) : Observable<any>{
+    return this.http.post<{ to: string, message: string }>("/api/email/send", email)
+  }
 }
 

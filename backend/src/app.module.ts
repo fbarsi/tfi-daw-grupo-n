@@ -14,16 +14,31 @@ import { RespuestasAbiertas } from './respuestas-abiertas/entities/respuestas-ab
 import { RespuestasOpciones } from './respuestas-opciones/entities/respuestas-opciones.entity';
 import { RespuestasVerdaderoFalso } from './respuestas-verdadero-falso/entities/respuestas-verdadero-falso.entity';
 import { RespuestasVerdaderoFalsoModule } from './respuestas-verdadero-falso/respuestas-verdadero-falso.module';
+import { EmailController } from './email/email.controller';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '1234',
-      database: 'tfi-db',
+    ConfigModule.forRoot({
+      isGlobal: true,
+      ignoreEnvFile: false,
+      load: [configuration]
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get('database.host'),
+        port: config.get('database.port'),
+        username: config.get('database.db_user'),
+        password: config.get('database.password'),
+        database: config.get('database.database'),
+        synchronize: config.get('database.synchronize'),
+        logging: config.get('database.logging'),
       entities: [
         Encuestas, 
         Preguntas, 
@@ -33,7 +48,7 @@ import { RespuestasVerdaderoFalsoModule } from './respuestas-verdadero-falso/res
         RespuestasOpciones,
         RespuestasVerdaderoFalso
       ],
-      synchronize: true
+    }),
     }),
     EncuestasModule, 
     OpcionesModule, 
@@ -41,6 +56,9 @@ import { RespuestasVerdaderoFalsoModule } from './respuestas-verdadero-falso/res
     RespuestasModule, 
     RespuestasAbiertasModule,
     RespuestasOpcionesModule,
-    RespuestasVerdaderoFalsoModule], 
+    RespuestasVerdaderoFalsoModule,
+    EmailModule],
+  controllers: [EmailController],
+  providers: [EmailService], 
 })
 export class AppModule {}
