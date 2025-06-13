@@ -56,7 +56,120 @@
           Exportar CSV
         </button>
       </div>
-    </div>
+
+      <hr class="my-5">
+
+      <div class="individual-responses-section">
+        <h2>Respuestas Individuales</h2>
+
+        @if (respuestasCargando) {
+          <p>Cargando respuestas...</p>
+        } @else if (respuestasIndividuales.length > 0) {
+          <div class="accordion">
+            @for (respuesta of respuestasIndividuales; track $index) {
+              <div class="accordion-item">
+                <h2 class="accordion-header" [id]="'heading' + $index">
+                  <button class="accordion-button"
+                          type="button"
+                          [class.collapsed]="respuestaDesplegadaIndex !== $index"
+                          (click)="toggleRespuesta($index)"
+                          [attr.aria-expanded]="respuestaDesplegadaIndex === $index ? 'true' : 'false'"
+                          [attr.aria-controls]="'collapse' + $index">
+                    Respuesta N° {{ (paginaActualRespuestas - 1) * limitePorPagina + $index + 1 }}
+                  </button>
+                </h2>
+                <div [id]="'collapse' + $index"
+                     class="accordion-collapse collapse"
+                     [class.show]="respuestaDesplegadaIndex === $index"
+                     [attr.aria-labelledby]="'heading' + $index">
+                  <div class="accordion-body text-start">
+                    @for (preguntaRespondida of respuesta.preguntas; track preguntaRespondida.numero) {
+                      <div class="mb-3">
+                        @if (getPreguntaEsquema(preguntaRespondida.numero); as esquemaPregunta) {
+                          <p><strong>{{ esquemaPregunta.numero }}. {{ esquemaPregunta.texto }}</strong></p>
+
+                          @if (esquemaPregunta.tipo === 'abierta') {
+                            <p>Respuesta: {{ preguntaRespondida.respuesta }}</p>
+                          } @else if (esquemaPregunta.tipo === 'opcion_multiple_seleccion_simple') {
+                            @for (opcion of esquemaPregunta.opciones; track opcion.numero) {
+                              <div class="form-check">
+                                  <input class="form-check-input"
+                                         type="radio"
+                                         [id]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_opt_' + opcion.numero"
+                                         [checked]="preguntaRespondida.respuesta === opcion.numero"
+                                         disabled
+                                  >
+                                  <label class="form-check-label"
+                                         [for]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_opt_' + opcion.numero"
+                                  >
+                                      {{ opcion.texto }}
+                                  </label>
+                              </div>
+                            }
+                          } @else if (esquemaPregunta.tipo === 'opcion_multiple_seleccion_multiple') {
+                            @for (opcion of esquemaPregunta.opciones; track opcion.numero) {
+                              <div class="form-check">
+                                  <input class="form-check-input"
+                                         type="checkbox"
+                                         [id]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_opt_m_' + opcion.numero"
+                                         [checked]="isOpcionMultipleChecked(preguntaRespondida.respuesta, opcion.numero)"
+                                         disabled
+                                  >
+                                  <label class="form-check-label"
+                                         [for]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_opt_m_' + opcion.numero"
+                                  >
+                                      {{ opcion.texto }}
+                                  </label>
+                              </div>
+                            }
+                          } @else if (esquemaPregunta.tipo === 'verdadero_falso') {
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       [id]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_vf_true'"
+                                       [checked]="preguntaRespondida.respuesta === true"
+                                       disabled
+                                >
+                                <label class="form-check-label"
+                                       [for]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_vf_true'"
+                                >
+                                    Verdadero
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       [id]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_vf_false'"
+                                       [checked]="preguntaRespondida.respuesta === false"
+                                       disabled
+                                >
+                                <label class="form-check-label"
+                                       [for]="'resp_' + $index + '_q_' + esquemaPregunta.numero + '_vf_false'"
+                                >
+                                    Falso
+                                </label>
+                            </div>
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="pagination-controls mt-4 d-flex justify-content-center align-items-center">
+            <button class="btn btn-outline-primary me-2" (click)="paginaAnterior()" [disabled]="paginaActualRespuestas === 1">Anterior</button>
+            <span>Página {{ paginaActualRespuestas }} de {{ ultimaPaginaRespuestas }} (Total: {{ totalRespuestasIndividuales }})</span>
+            <button class="btn btn-outline-primary ms-2" (click)="paginaSiguiente()" [disabled]="paginaActualRespuestas === ultimaPaginaRespuestas">Siguiente</button>
+          </div>
+
+        } @else if (!respuestasCargando) {
+          <p>No se encontraron respuestas individuales para esta encuesta.</p>
+        }
+      </div>
+      </div>
   }
 
   @if (!cargando && !encuesta) {

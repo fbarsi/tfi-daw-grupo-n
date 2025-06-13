@@ -10,10 +10,18 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Chart } from 'chart.js';
 import { ApiService } from '../api/api.service';
-import { Encuesta, Pregunta } from '../models/encuesta.model';
+import { Encuesta, Pregunta, Opcion } from '../models/encuesta.model';
 
 interface ExtendedCanvasElement extends HTMLCanvasElement {
   chart?: Chart;
+}
+
+
+interface RespuestaIndividual {
+  preguntas: {
+    numero: number;
+    respuesta: any;
+  }[];
 }
 
 @Component({
@@ -31,10 +39,22 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
   encuesta!: Encuesta;
   cargando = true;
 
+  respuestasIndividuales: RespuestaIndividual[] = [];
+  respuestasCargando: boolean = false;
+  paginaActualRespuestas: number = 1;
+  limitePorPagina: number = 5;
+  totalRespuestasIndividuales: number = 0;
+  ultimaPaginaRespuestas: number = 1;
+
+  esquemaPreguntasEncuesta: Pregunta[] = [];
+
+  respuestaDesplegadaIndex: number | null = null;
+
   constructor(private route: ActivatedRoute, private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.codigoResultados = this.route.snapshot.params['codigo'];
+
     this.apiService.obtenerEstadisticas(this.codigoResultados).subscribe({
       next: (data) => {
         data.preguntas.forEach((pregunta: Pregunta) => {
@@ -55,14 +75,76 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
         }, 0);
       },
       error: (err) => {
-        console.error('Error al cargar la encuesta', err);
-        this.cargando = false;
+        console.error('Error al cargar las estadísticas', err);
+        this.cargando = false; 
       },
+    });
+
+    this.apiService.obtenerEncuestaPorCodigoResultados(this.codigoResultados).subscribe({ 
+      next: (data) => { 
+        this.esquemaPreguntasEncuesta = data.preguntas; 
+        this.cargarRespuestasIndividuales(this.paginaActualRespuestas);
+      },
+      error: (err) => { 
+        console.error('Error al cargar el esquema de preguntas', err); 
+      }
     });
   }
 
-  ngAfterViewInit(): void {
-    this.canvases.changes.subscribe(() => this.crearGraficos());
+  isOpcionMultipleChecked(respuesta: any, opcionNumero: number): boolean {
+    return Array.isArray(respuesta) && respuesta.includes(opcionNumero);
+  }
+
+  ngAfterViewInit(): void { 
+    this.canvases.changes.subscribe(() => this.crearGraficos()); 
+    setTimeout(() => { 
+      this.crearGraficos(); 
+    }, 0); 
+  }
+
+  cargarRespuestasIndividuales(page: number): void {
+    this.respuestasCargando = true; 
+    this.apiService.obtenerRespuestasDeEncuesta(this.codigoResultados, page, this.limitePorPagina).subscribe({ 
+      next: (response) => { 
+        this.respuestasIndividuales = response.data; 
+        this.totalRespuestasIndividuales = response.total; 
+        this.paginaActualRespuestas = response.page; 
+        this.ultimaPaginaRespuestas = response.last_page; 
+        this.respuestasCargando = false; 
+        this.respuestaDesplegadaIndex = null;
+      },
+      error: (err) => { 
+        console.error('Error al cargar respuestas individuales', err); 
+        this.respuestasCargando = false; 
+      }
+    });
+  }
+
+  paginaAnterior(): void { 
+    if (this.paginaActualRespuestas > 1) { 
+      this.cargarRespuestasIndividuales(this.paginaActualRespuestas - 1); 
+    }
+  }
+
+  paginaSiguiente(): void { 
+    if (this.paginaActualRespuestas < this.ultimaPaginaRespuestas) { 
+      this.cargarRespuestasIndividuales(this.paginaActualRespuestas + 1); 
+    }
+  }
+
+  toggleRespuesta(index: number): void { 
+    this.respuestaDesplegadaIndex = this.respuestaDesplegadaIndex === index ? null : index; 
+  }
+
+  getPreguntaEsquema(numeroPregunta: number): Pregunta | undefined { 
+    return this.esquemaPreguntasEncuesta.find(p => p.numero === numeroPregunta); 
+  }
+
+  getOpcionTexto(esquemaPregunta: Pregunta, numeroOpcion: number): string | undefined {
+    if (esquemaPregunta.opciones) { 
+      return esquemaPregunta.opciones.find(op => op.numero === numeroOpcion)?.texto; 
+    }
+    return undefined; 
   }
 
   private crearGraficos(): void {
