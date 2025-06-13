@@ -49,8 +49,8 @@ DATABASE=                # Nombre de la base de datos
 SYNCH=                   # Sincroniza entidades automáticamente (solo para desarrollo)
 
 # ✉️ Configuración de correo
-MAIL_USER=syramoranicr@gmail.com      # Cuenta desde la cual se envían los correos
-MAIL_PASS=dafx wwuw znet fjte         # Clave de aplicación generada desde Gmail
+MAIL_USER=     # Cuenta desde la cual se envían los correos
+MAIL_PASS=      # Clave de aplicación generada desde Gmail
 ```
 
 2. Ejecutar servidor:
