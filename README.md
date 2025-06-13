@@ -1,8 +1,8 @@
 
 # 📝 Proyecto de Encuestas – NestJS + Angular
+# ENLACE AL VIDEO: https://youtu.be/jt-bXQhSKA4
 
-Aplicación fullstack para crear, enviar y responder encuestas online. Incluye generación de código QR, envío por correo electrónico y visualización de estadísticas.
-
+Aplicación fullstack para crear, enviar y responder encuestas anónimas online. 
 ---
 
 ## 🌐 Tecnologías utilizadas
