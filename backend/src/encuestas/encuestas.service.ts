@@ -1,17 +1,14 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { CreateEncuestasDto } from './dto/create-encuestas.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Encuestas } from './entities/encuestas.entity';
-import { Brackets, EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Preguntas } from 'src/preguntas/entities/preguntas.entity';
-import { Opciones } from 'src/opciones/entities/opciones.entity';
 import { PreguntasService } from 'src/preguntas/preguntas.service';
 import { Respuestas } from 'src/respuestas/entities/respuestas.entity';
-import { resolve } from 'path';
 import { Parser } from '@json2csv/plainjs';
 import { RespuestasVerdaderoFalso } from 'src/respuestas-verdadero-falso/entities/respuestas-verdadero-falso.entity';
 
@@ -74,6 +71,94 @@ export class EncuestasService {
     });
   }
 
+  async obtenerRespuestasDeEncuesta(
+    codigo_resultados: string,
+    page: number = 1,
+    limit: number = 5
+  ): Promise<{ data: any[]; total: number; page: number; last_page: number }> {
+    // obtener la encuesta con sus respuestas
+    const encuesta = await this.encuestasRepository.findOne({
+      where: { codigo_resultados },
+      relations: ['respuestas']
+    });
+
+    if (!encuesta) {
+      throw new BadRequestException('Encuesta no encontrada');
+    }
+
+    const skip = (page - 1) * limit;
+
+    // obtener las respuestas con sus relaciones y paginación
+    const [respuestas, total] = await this.respuestasRepository.findAndCount({
+      where: { encuesta: { id: encuesta.id } },
+      relations: [
+        'respuestas_abiertas',
+        'respuestas_abiertas.pregunta',
+        'respuestas_opciones',
+        'respuestas_opciones.opcion',
+        'respuestas_opciones.opcion.pregunta',
+        'respuestas_verdadero_falso',
+        'respuestas_verdadero_falso.pregunta'
+      ],
+      order: { id: 'ASC' },
+      skip: skip,
+      take: limit,
+    });
+
+    // formatear las respuestas según el tipo
+    const formattedResponses = respuestas.map(respuesta => {
+      const respuestasPorPregunta: Record<number, any> = {};
+
+      // procesar respuestas abiertas
+      respuesta.respuestas_abiertas?.forEach(ra => {
+        respuestasPorPregunta[ra.pregunta.id] = {
+          numero: ra.pregunta.numero,
+          respuesta: ra.texto
+        };
+      });
+
+      // procesar respuestas de opciones
+      respuesta.respuestas_opciones?.forEach(ro => {
+        const pregunta = ro.opcion.pregunta;
+        if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
+          respuestasPorPregunta[pregunta.id] = {
+            numero: pregunta.numero,
+            respuesta: ro.opcion.numero
+          };
+        } else if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
+          if (!respuestasPorPregunta[pregunta.id]) {
+            respuestasPorPregunta[pregunta.id] = {
+              numero: pregunta.numero,
+              respuesta: []
+            };
+          }
+          respuestasPorPregunta[pregunta.id].respuesta.push(ro.opcion.numero);
+        }
+      });
+
+      // procesar respuestas verdadero/falso
+      respuesta.respuestas_verdadero_falso?.forEach(rvf => {
+        respuestasPorPregunta[rvf.pregunta.id] = {
+          numero: rvf.pregunta.numero,
+          respuesta: rvf.opcion
+        };
+      });
+
+      return {
+        preguntas: Object.values(respuestasPorPregunta).sort((a, b) => a.numero - b.numero)
+      };
+    });
+
+    const last_page = Math.ceil(total / limit);
+
+    return {
+      data: formattedResponses,
+      total: total,
+      page: page,
+      last_page: last_page
+    };
+  }
+
   async obtenerPreguntas(codigo_respuesta: string): Promise<Encuestas | null> {
     const encuesta = await this.encuestasRepository
       .createQueryBuilder('encuesta')
@@ -125,6 +210,7 @@ export class EncuestasService {
       .orderBy('pregunta.numero', 'ASC')
       .select([
         'encuesta.nombre',
+        'pregunta.id',
         'pregunta.numero',
         'pregunta.texto',
         'pregunta.tipo',
@@ -137,6 +223,7 @@ export class EncuestasService {
     if (encuesta && encuesta.preguntas) {
       for (const pregunta of encuesta.preguntas) {
         if (pregunta.tipo === 'verdadero_falso') { 
+          console.log(pregunta.id)
           const conteoVerdaderoFalso = await this.respuestasVerdaderoFalsoRepository
             .createQueryBuilder('rvf')
             .select([
@@ -146,7 +233,6 @@ export class EncuestasService {
             .where('rvf.id_pregunta = :idPregunta', { idPregunta: pregunta.id })
             .groupBy('rvf.opcion')
             .getRawMany();
-          console.log(conteoVerdaderoFalso)
           pregunta.respuestasVFAgrupadas = {
             verdadero: conteoVerdaderoFalso.find(item => item.rvf_opcion === true)?.total || 0,
             falso: conteoVerdaderoFalso.find(item => item.rvf_opcion === false)?.total || 0
@@ -154,7 +240,6 @@ export class EncuestasService {
         }
       }
     }
-
 
     if (!encuesta) {
       throw new BadRequestException('Encuesta no encontrada');

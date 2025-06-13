@@ -10,8 +10,6 @@ import { Opciones } from 'src/opciones/entities/opciones.entity';
 @Injectable()
 export class RespuestasOpcionesService {
   constructor(
-    // @InjectRepository(RespuestasOpciones)
-    // private readonly respuestasOpcionesRepository: Repository<RespuestasOpciones>
   ) {}
 
   async crearRespuestasOpciones(
@@ -30,12 +28,4 @@ export class RespuestasOpcionesService {
         }
     }
     }
-
-  // async findAll(): Promise<RespuestasOpciones[]> {
-  //   return await this.respuestasOpcionesRepository.find();
-  // }
-
-  // async findOne(id: number): Promise<RespuestasOpciones | null> {
-  //   return await this.respuestasOpcionesRepository.findOne({ where: { id } });
-  // }
 }

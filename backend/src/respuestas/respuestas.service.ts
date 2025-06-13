@@ -77,7 +77,7 @@ export class RespuestasService {
         break;
 
       case 'verdadero_falso':
-        if (preguntaDto.opcion) {
+        if (preguntaDto.opcion !== undefined) {
           await this.respuestasVerdaderoFalsoService.crearRespuestaVerdaderoFalso(
             manager,
             preguntaDto.opcion,
@@ -99,17 +99,5 @@ export class RespuestasService {
         }
         break;
     }
-  }
-
-  async test(test) {
-    console.log(test)
-  }
-
-  async findAll() {
-    // return await this.respuestasRepository.find();
-  }
-
-  async findOne(id: number) {
-    // return await this.respuestasRepository.findOne({ where: { id } });
   }
 }

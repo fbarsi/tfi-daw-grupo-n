@@ -22,7 +22,6 @@ interface ExtendedCanvasElement extends HTMLCanvasElement {
   selector: 'app-estadisticas',
   templateUrl: './estadisticas.component.html',
   styleUrls: ['./estadisticas.component.css'],
-  
 })
 export class EstadisticasComponent implements OnInit, AfterViewInit {
   @ViewChildren('chartCanvas')
@@ -38,9 +37,22 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     this.codigoResultados = this.route.snapshot.params['codigo'];
     this.apiService.obtenerEstadisticas(this.codigoResultados).subscribe({
       next: (data) => {
+        data.preguntas.forEach((pregunta: Pregunta) => {
+          if (pregunta.tipo === 'verdadero_falso' && pregunta.respuestasVFAgrupadas) {
+            pregunta.respuestasVFAgrupadas.verdadero = Number(pregunta.respuestasVFAgrupadas.verdadero || 0);
+            pregunta.respuestasVFAgrupadas.falso = Number(pregunta.respuestasVFAgrupadas.falso || 0);
+          }
+          if (pregunta.opciones) {
+            pregunta.opciones.forEach(opcion => {
+              opcion.totalRespuestas = Number(opcion.totalRespuestas || 0);
+            });
+          }
+        });
         this.encuesta = data;
         this.cargando = false;
-        setTimeout(() => this.crearGraficos(), 50);
+        setTimeout(() => {
+          this.crearGraficos();
+        }, 0);
       },
       error: (err) => {
         console.error('Error al cargar la encuesta', err);
@@ -49,26 +61,36 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void {
+    this.canvases.changes.subscribe(() => this.crearGraficos());
+  }
 
   private crearGraficos(): void {
     if (!this.encuesta || !this.canvases) return;
 
+    const preguntasConGrafico = this.encuesta.preguntas.filter((pregunta) =>
+      pregunta.tipo === 'opcion_multiple_seleccion_multiple' ||
+      pregunta.tipo === 'opcion_multiple_seleccion_simple' ||
+      pregunta.tipo === 'verdadero_falso'
+    );
+
     this.canvases.forEach((canvasRef, idx) => {
-      const pregunta = this.encuesta.preguntas[idx];
+      const pregunta = preguntasConGrafico[idx];
       const canvas = canvasRef.nativeElement as ExtendedCanvasElement;
       const ctx = canvas.getContext('2d');
 
       if (!ctx) return;
 
       if (canvas.chart) {
-      canvas.chart.destroy();
-    }
+        canvas.chart.destroy();
+      }
 
       if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
-        this.crearBarChartHorizontal(ctx, pregunta, canvas);
-      } else if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
-        this.crearPieChart(ctx, pregunta, canvas);
+        if (pregunta.opciones) {
+            this.crearBarChartHorizontal(ctx, pregunta, canvas);
+        }
+      } else if (pregunta.tipo === 'opcion_multiple_seleccion_simple' || pregunta.tipo === 'verdadero_falso') {
+          this.crearPieChart(ctx, pregunta, canvas);
       }
     });
   }
@@ -78,9 +100,9 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     pregunta: Pregunta,
     canvas: ExtendedCanvasElement
   ): void {
-    const opcionesOrdenadas = [...pregunta.opciones].sort(
+    const opcionesOrdenadas = pregunta.opciones ? [...pregunta.opciones].sort(
       (a, b) => a.numero - b.numero
-    );
+    ) : [];
 
     const newChart = new Chart(ctx, {
       type: 'bar',
@@ -97,7 +119,7 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
         ],
       },
       options: {
-        indexAxis: 'y', // Esto hace las barras horizontales
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -134,9 +156,26 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     pregunta: Pregunta,
     canvas: ExtendedCanvasElement
   ): void {
-    const opcionesOrdenadas = [...pregunta.opciones].sort(
-      (a, b) => a.numero - b.numero
-    );
+    let labels: string[];
+    let data: number[];
+
+    if (pregunta.tipo === 'verdadero_falso' && pregunta.respuestasVFAgrupadas) {
+      labels = ['Verdadero', 'Falso'];
+      data = [
+        pregunta.respuestasVFAgrupadas.verdadero,
+        pregunta.respuestasVFAgrupadas.falso,
+      ];
+    } else if (pregunta.opciones) {
+      const opcionesOrdenadas = [...pregunta.opciones].sort(
+        (a, b) => a.numero - b.numero
+      );
+      labels = opcionesOrdenadas.map((op) => op.texto);
+      data = opcionesOrdenadas.map((op) => op.totalRespuestas);
+    } else {
+        labels = ['N/A'];
+        data = [0];
+    }
+
     const backgroundColors = [
       'rgba(255, 99, 132, 0.7)',
       'rgba(54, 162, 235, 0.7)',
@@ -149,13 +188,13 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     const newChart = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: opcionesOrdenadas.map((op) => op.texto),
+        labels: labels,
         datasets: [
           {
-            data: opcionesOrdenadas.map((op) => op.totalRespuestas),
+            data: data,
             backgroundColor: backgroundColors.slice(
               0,
-              opcionesOrdenadas.length
+              labels.length
             ),
             borderColor: '#fff',
             borderWidth: 1,
@@ -190,8 +229,8 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
               label: function (context) {
                 const label = context.label || '';
                 const value = context.raw || 0;
-                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                const percentage = Math.round((+value / total) * 100);
+                const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const percentage = total > 0 ? Math.round((+value / total) * 100) : 0;
                 return `${label}: ${value} (${percentage}%)`;
               },
             },
@@ -214,7 +253,6 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
   }
 
   manejarDescarga(blob: Blob): void {
-    this.apiService.obtenerCSV(this.codigoResultados).subscribe()
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -222,15 +260,17 @@ export class EstadisticasComponent implements OnInit, AfterViewInit {
     a.click();
     window.URL.revokeObjectURL(url);
   }
-  
+
 
   getTotalRespuestas(pregunta: Pregunta): number {
     if (pregunta.tipo === 'abierta') {
-      return pregunta.respuestas_abiertas.length;
+      return pregunta.respuestas_abiertas?.length ?? 0;
+    } else if (pregunta.tipo === 'verdadero_falso' && pregunta.respuestasVFAgrupadas) {
+      return pregunta.respuestasVFAgrupadas.verdadero + pregunta.respuestasVFAgrupadas.falso;
     }
-    return pregunta.opciones.reduce(
-      (total, opcion) => total + opcion.totalRespuestas,
+    return pregunta.opciones?.reduce(
+      (total, opcion) => total + (opcion.totalRespuestas || 0),
       0
-    );
+    ) ?? 0;
   }
 }

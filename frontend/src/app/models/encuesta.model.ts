@@ -8,12 +8,18 @@ export interface RespuestaAbierta {
   texto: string;
 }
 
+export interface RespuestasVFAgrupadas {
+  verdadero: number;
+  falso: number;
+}
+
 export interface Pregunta {
   numero: number;
   texto: string;
-  tipo: 'abierta' | 'opcion_multiple_seleccion_simple' | 'opcion_multiple_seleccion_multiple';
-  opciones: Opcion[];
-  respuestas_abiertas: RespuestaAbierta[]
+  tipo: 'abierta' | 'opcion_multiple_seleccion_simple' | 'opcion_multiple_seleccion_multiple' | 'verdadero_falso';
+  opciones?: Opcion[];
+  respuestas_abiertas?: RespuestaAbierta[];
+  respuestasVFAgrupadas?: RespuestasVFAgrupadas;
 }
 
 export interface Encuesta {

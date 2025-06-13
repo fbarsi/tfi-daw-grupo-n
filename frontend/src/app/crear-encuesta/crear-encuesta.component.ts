@@ -13,8 +13,6 @@ import { ApiService } from '../api/api.service';
   templateUrl: './crear-encuesta.component.html',
   styleUrl: './crear-encuesta.component.css'
 })
-
-
 export class CrearEncuestaComponent implements OnInit {
   encuesta: FormGroup;
   mostrarQR = false;
@@ -23,8 +21,9 @@ export class CrearEncuestaComponent implements OnInit {
   baseUrl = 'http://localhost:4200';
   listaTipos = [
     { value: 'abierta', label: 'Abierta' },
-    { value: 'opcion_multiple_seleccion_simple', label: 'Opcion simple' },
-    { value: 'opcion_multiple_seleccion_multiple', label: 'Opcion multiple' }
+    { value: 'opcion_multiple_seleccion_simple', label: 'Opción simple' },
+    { value: 'opcion_multiple_seleccion_multiple', label: 'Opción múltiple' },
+    { value: 'verdadero_falso', label: 'Verdadero/Falso' }
   ];
 
   //configuraciones del correo
@@ -91,7 +90,7 @@ export class CrearEncuestaComponent implements OnInit {
 
   mostrarOpciones(preguntaId: number): boolean {
     const tipo = this.preguntasArray.at(preguntaId).get('tipo')?.value;
-    return tipo !== 'abierta'
+    return tipo === 'opcion_multiple_seleccion_simple' || tipo === 'opcion_multiple_seleccion_multiple';
   }
 
   agregarOpcion(preguntaId: number) {
@@ -112,13 +111,11 @@ export class CrearEncuestaComponent implements OnInit {
   }
 
   onSubmit() {
-
-
     if (this.encuesta.valid) {
-      const encuestaTerminada = this.encuesta.value
+      const encuestaTerminada = this.encuesta.value;
 
       encuestaTerminada.preguntas.forEach((pregunta: any) => {
-        if (pregunta.tipo === 'abierta') {
+        if (pregunta.tipo === 'abierta' || pregunta.tipo === 'verdadero_falso') {
           pregunta.opciones = [];
         }
       });
@@ -138,9 +135,6 @@ export class CrearEncuestaComponent implements OnInit {
     }
   }
 
-
-
-
   enviarEmail(res: any) {
     const urlConCodigo = `${this.urlActual}respuesta/${res.codigo_respuesta}`;
     this.email.get('message')?.setValue(urlConCodigo);
@@ -156,5 +150,4 @@ export class CrearEncuestaComponent implements OnInit {
       })
     }
   }
-
 }

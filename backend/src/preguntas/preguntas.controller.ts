@@ -6,11 +6,6 @@ import { CreatePreguntasDto } from './dto/create-preguntas.dto';
 export class PreguntasController {
   constructor(private readonly preguntasService: PreguntasService) {}
 
-  // @Post()
-  // create(@Body() createPreguntasDto: CreatePreguntasDto) {
-  //   return this.preguntasService.create(createPreguntasDto);
-  // }
-
   @Get()
   findAll() {
     return this.preguntasService.findAll();

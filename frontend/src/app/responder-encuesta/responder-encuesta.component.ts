@@ -34,14 +34,14 @@ export class ResponderEncuestaComponent implements OnInit {
     this.apiService.obtenerEncuesta(this.codigoRespuesta)
       .subscribe({
         next: (data) => {
-          this.encuesta = data,
-          this.preguntas = this.encuesta.preguntas,
+          this.encuesta = data;
+          this.preguntas = this.encuesta.preguntas;
           this.buildForm();
         },
         error: (err) => console.error('Error al cargar la encuesta', err)
       });
   }
-  
+
   private buildForm() {
     const formControls: Record<string, any> = {};
     this.preguntas.forEach(pregunta => {
@@ -49,11 +49,13 @@ export class ResponderEncuestaComponent implements OnInit {
         formControls[`pregunta_${pregunta.numero}`] = ['', Validators.required];
       } else if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
         formControls[`pregunta_${pregunta.numero}`] = ['', Validators.required];
-      } else {
+      } else if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
         formControls[`pregunta_${pregunta.numero}`] = this.fb.array(
-          pregunta.opciones.map(() => this.fb.control(false)),
+          pregunta.opciones ? pregunta.opciones.map(() => this.fb.control(false)) : [],
           [Validators.required, Validators.minLength(1)]
         );
+      } else if (pregunta.tipo === 'verdadero_falso') {
+        formControls[`pregunta_${pregunta.numero}`] = [null, Validators.required];
       }
     });
     this.testForm = this.fb.group(formControls)
@@ -66,7 +68,7 @@ export class ResponderEncuestaComponent implements OnInit {
   onSubmit() {
     if (this.testForm.valid) {
       const formValue = this.testForm.value;
-      
+
       const respuestas = {
         codigo_respuesta: this.codigoRespuesta,
         preguntas: this.preguntas.map(pregunta => {
@@ -79,23 +81,31 @@ export class ResponderEncuestaComponent implements OnInit {
             return {
               numero: pregunta.numero,
               numerosOpciones: pregunta.opciones
-                .filter((_, index) => formValue[`pregunta_${pregunta.numero}`][index])
-                .map(opcion => opcion.numero)
+                ? pregunta.opciones
+                    .filter((_, index) => formValue[`pregunta_${pregunta.numero}`][index])
+                    .map(opcion => opcion.numero)
+                : []
             };
-          } else {
+          } else if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
             return {
               numero: pregunta.numero,
               numerosOpciones: [formValue[`pregunta_${pregunta.numero}`]]
             };
+          } else if (pregunta.tipo === 'verdadero_falso') {
+            return {
+              numero: pregunta.numero,
+              opcion: formValue[`pregunta_${pregunta.numero}`]
+            };
           }
+          return { numero: pregunta.numero };
         })
       }
 
       this.apiService.enviarRespuestas(respuestas).subscribe({
         next: () => this.encuestaEnviada = true,
         error: (err) => console.error('Error al enviar:', err)
-    });
-      
+      });
+
       console.log('Respuestas procesadas:', respuestas);
     } else {
       console.log('Formulario inválido');

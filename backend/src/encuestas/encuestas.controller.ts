@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Response } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Response, Query, BadRequestException } from '@nestjs/common';
 import { EncuestasService } from './encuestas.service';
 import { CreateEncuestasDto } from './dto/create-encuestas.dto';
 
@@ -21,11 +21,26 @@ export class EncuestasController {
   @Get(':codigo_respuesta')
   obtenerPreguntas(@Param('codigo_respuesta') codigo_respuesta: string) {
     return this.encuestasService.obtenerPreguntas(codigo_respuesta);
-    
+  }
+
+  @Get('respuestas/:codigo_resultados')
+  async obtenerRespuestasDeEncuesta(
+    @Param('codigo_resultados') codigo_resultados: string,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '5'
+  ) {
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    if (isNaN(pageNum) || pageNum <= 0 || isNaN(limitNum) || limitNum <= 0) {
+      throw new BadRequestException('Los parámetros de paginación "page" y "limit" deben ser números positivos.');
+    }
+
+    return this.encuestasService.obtenerRespuestasDeEncuesta(codigo_resultados, pageNum, limitNum);
   }
 
   @Get('estadisticas/:codigo_resultados')
-  findStatistics(@Param('codigo_resultados') codigo_resultados: string) {
+  obtenerEstadisticas(@Param('codigo_resultados') codigo_resultados: string) {
     return this.encuestasService.obtenerEstadisticas(codigo_resultados);
   }
 

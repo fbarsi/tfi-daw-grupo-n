@@ -1,17 +1,17 @@
 <div class="container-estadisticas">
   <div class="container">
-    
+
     @if (cargando) {
       <div class="loading">
         <p>Cargando estadísticas...</p>
       </div>
     }
-    
+
     @if (!cargando && encuesta) {
     <div>
       <h1 class="titulo">{{ encuesta.nombre }}</h1>
       <h3 class="titulo">Estadísticas</h3>
-      
+
       @for (pregunta of encuesta.preguntas; track pregunta.numero; let i = $index) {
         <div class="question-container">
           <div class="question-header">
@@ -25,7 +25,7 @@
             </div>
           }
 
-          @if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
+          @if (pregunta.tipo === 'opcion_multiple_seleccion_simple' || pregunta.tipo === 'verdadero_falso') {
             <div class="chart-container pie-chart">
               <canvas #chartCanvas></canvas>
             </div>
@@ -33,9 +33,9 @@
 
           @if (pregunta.tipo === 'abierta') {
             <div class="open-answers">
-              <h4>Respuestas recibidas ({{ pregunta.respuestas_abiertas.length }}):</h4>
-              
-              @if (pregunta.respuestas_abiertas.length > 0) {
+              <h4>Respuestas recibidas ({{ pregunta.respuestas_abiertas?.length ?? 0 }}):</h4>
+
+              @if (pregunta.respuestas_abiertas && pregunta.respuestas_abiertas.length > 0) {
                 <div>
                   <ul>
                     @for (respuesta of pregunta.respuestas_abiertas; track respuesta.texto) {

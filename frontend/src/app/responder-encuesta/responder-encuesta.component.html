@@ -1,69 +1,96 @@
 <div class="contenedor-responder">
-@if (!encuestaEnviada && encuesta) {
-  <form [formGroup]="testForm" (ngSubmit)="onSubmit()">
-    <div class="contenedor-titulo w-75">
-    <h2>{{ encuesta.nombre }}</h2>
-    </div>
+  @if (!encuestaEnviada && encuesta) {
+    <form [formGroup]="testForm" (ngSubmit)="onSubmit()">
+      <div class="contenedor-titulo w-75">
+        <h2>{{ encuesta.nombre }}</h2>
+      </div>
 
-    <div class="seccion-preguntas mw-100 my-4">
-    @for (pregunta of preguntas; track pregunta.numero) {
-      <div class="seccion-pregunta">
-        <div class="contenedorPreguntas d-flex flex-column justify-content-start text-start ps-4">
-        <h3>{{ pregunta.numero }}. {{ pregunta.texto }}</h3>
+      <div class="seccion-preguntas mw-100 my-4">
+        @for (pregunta of preguntas; track pregunta.numero) {
+          <div class="seccion-pregunta">
+            <div class="contenedorPreguntas d-flex flex-column justify-content-start text-start ps-4">
+              <h3>{{ pregunta.numero }}. {{ pregunta.texto }}</h3>
 
-        @if (pregunta.tipo === 'abierta') {
-          <div>
-            <textarea class="form-control" [formControlName]="'pregunta_' + pregunta.numero"></textarea>
-          </div>
-        } @else if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
-          <div class="contenedor-tipo-opciones">
-            @for (opcion of pregunta.opciones; track opcion.numero) {
-              <div class="contenedor-opciones form-check">
-                <input 
-                class="form-check-input"
-                  type="radio" 
-                  [id]="'pregunta_' + pregunta.numero + '_opcion_' + opcion.numero" 
-                  [formControlName]="'pregunta_' + pregunta.numero"
-                  [value]="opcion.numero"
-                />
-                <label class="form-check-label" [for]="'pregunta_' + pregunta.numero + '_opcion_' + opcion.numero">
-                  {{opcion.texto}}
-                </label>
-              </div>
-            }
-          </div>
-        } @else if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
-          <div class="contenedor-tipo-multiple">
-          <div formArrayName="pregunta_{{pregunta.numero}}">
-            @for (opcion of pregunta.opciones; track i; let i = $index) {
-              <div class="form-check">
-                <input 
-                class="form-check-input"
-                  type="checkbox" 
-                  [id]="'pregunta_' + pregunta.numero + '_opcion_' + i" 
-                  [formControlName]="i"
-                />
-                <label [for]="'pregunta_' + pregunta.numero + '_opcion_' + i">
-                  {{opcion.texto}}
-                </label>
-              </div>
-            }
-          </div>
+              @if (pregunta.tipo === 'abierta') {
+                <div>
+                  <textarea class="form-control" [formControlName]="'pregunta_' + pregunta.numero"></textarea>
+                </div>
+              } @else if (pregunta.tipo === 'opcion_multiple_seleccion_simple') {
+                <div class="contenedor-tipo-opciones">
+                  @for (opcion of pregunta.opciones; track opcion.numero) {
+                    <div class="contenedor-opciones form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        [id]="'pregunta_' + pregunta.numero + '_opcion_' + opcion.numero"
+                        [formControlName]="'pregunta_' + pregunta.numero"
+                        [value]="opcion.numero"
+                      />
+                      <label class="form-check-label" [for]="'pregunta_' + pregunta.numero + '_opcion_' + opcion.numero">
+                        {{opcion.texto}}
+                      </label>
+                    </div>
+                  }
+                </div>
+              } @else if (pregunta.tipo === 'opcion_multiple_seleccion_multiple') {
+                <div class="contenedor-tipo-multiple">
+                  <div formArrayName="pregunta_{{pregunta.numero}}">
+                    @for (opcion of pregunta.opciones; track i; let i = $index) {
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          [id]="'pregunta_' + pregunta.numero + '_opcion_' + i"
+                          [formControlName]="i"
+                        />
+                        <label [for]="'pregunta_' + pregunta.numero + '_opcion_' + i">
+                          {{opcion.texto}}
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else if (pregunta.tipo === 'verdadero_falso') {
+                <div class="contenedor-tipo-verdadero-falso">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      [id]="'pregunta_' + pregunta.numero + '_verdadero'"
+                      [formControlName]="'pregunta_' + pregunta.numero"
+                      [value]="true"
+                    />
+                    <label class="form-check-label" [for]="'pregunta_' + pregunta.numero + '_verdadero'">
+                      Verdadero
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      [id]="'pregunta_' + pregunta.numero + '_falso'"
+                      [formControlName]="'pregunta_' + pregunta.numero"
+                      [value]="false"
+                    />
+                    <label class="form-check-label" [for]="'pregunta_' + pregunta.numero + '_falso'">
+                      Falso
+                    </label>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         }
       </div>
-      </div>
-    }
-    </div>
-    <button type="submit" class="btn btn-outline-light boton" [disabled]="testForm.invalid">Enviar</button>
-  </form>
-}
+      <button type="submit" class="btn btn-outline-light boton" [disabled]="testForm.invalid">Enviar</button>
+    </form>
+  }
 
-@if (encuestaEnviada) {
-  <div>
-    <h2>¡Encuesta enviada correctamente!</h2>
-    <h4>Gracias por participar :D</h4>
-    <a class="btn btn-outline-light my-5" [routerLink]="['/crear']">Creá tu propia encuesta</a>
-  </div>
-}
+  @if (encuestaEnviada) {
+    <div>
+      <h2>¡Encuesta enviada correctamente!</h2>
+      <h4>Gracias por participar :D</h4>
+      <a class="btn btn-outline-light my-5" [routerLink]="['/crear']">Creá tu propia encuesta</a>
+    </div>
+  }
 </div>

@@ -14,5 +14,5 @@ export class CreateEncuestasDto {
 
   @IsOptional()
   @IsDateString({}, { message: 'fechaVencimiento debe ser una cadena ISO 8601' })
-  fechaVencimiento?: string;  // p.ej. "2025-06-30T23:59:59Z"
+  fechaVencimiento?: string;
 }
