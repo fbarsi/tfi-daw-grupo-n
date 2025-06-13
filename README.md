@@ -20,9 +20,6 @@ Aplicación fullstack para crear, enviar y responder encuestas online. Incluye g
 
 ---
 
-
----
-
 ## 🛠️ Instalación
 
 ### 🔧 Requisitos previos
@@ -41,9 +38,19 @@ npm install
 ```
 
 1. Crear archivo `.env`:
+
 ```env
-MAIL_USER=tu-correo@gmail.com
-MAIL_PASS=clave-de-aplicacion
+# 🛠️ Configuración de base de datos
+HOST=              # Host donde corre la base de datos
+PORT_DB=                 # Puerto del motor de base de datos (ej: PostgreSQL)
+DB_USER=             # Usuario de la base de datos
+PASS=                 # Contraseña de la base de datos
+DATABASE=                # Nombre de la base de datos
+SYNCH=                   # Sincroniza entidades automáticamente (solo para desarrollo)
+
+# ✉️ Configuración de correo
+MAIL_USER=syramoranicr@gmail.com      # Cuenta desde la cual se envían los correos
+MAIL_PASS=dafx wwuw znet fjte         # Clave de aplicación generada desde Gmail
 ```
 
 2. Ejecutar servidor:
@@ -83,7 +90,7 @@ ng serve --proxy-config proxy.conf.json
 - **Barsi Franco** – 
 - **Martínez Ávalos Bárbara** – 
 - **Milesi Agustín** – 
-- **Moran Syra** – [@Syramoran](https://github.com/Syramoran)
+- **Moran Syra** –
 - **Romanoli José** – 
 
 ---
