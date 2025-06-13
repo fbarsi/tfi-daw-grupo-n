@@ -4,8 +4,8 @@ module.exports = {
       name: 'encuestas',
       script: 'dist/main.js',
       env: {
-        NODE_ENV: 'production',
         PORT: 4000,
+        NODE_ENV: 'production',
         CORS_ORIGIN: 'localhost',
         DB_HOST: process.env.HOST,
         DB_PORT: Number(process.env.PORT_DB),

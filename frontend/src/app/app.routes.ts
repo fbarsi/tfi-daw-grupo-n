@@ -17,9 +17,9 @@ export const routes: Routes = [
         path: 'crear',
         component: CrearEncuestaComponent
     },
-
-    { path: 'estadisticas/:codigo',
-         component: EstadisticasComponent 
+    { 
+        path: 'estadisticas/:codigo',
+        component: EstadisticasComponent 
     },
     
 

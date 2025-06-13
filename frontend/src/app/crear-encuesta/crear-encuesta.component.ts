@@ -20,7 +20,7 @@ export class CrearEncuestaComponent {
   mostrarQR = false;
   qrResponder = '';
   urlResultados = '';
-  baseUrl = 'http://localhost:4200';
+  baseUrl = window.location.origin;
   listaTipos = [
     { value: 'abierta', label: 'Abierta' },
     { value: 'opcion_multiple_seleccion_simple', label: 'Opción simple' },
